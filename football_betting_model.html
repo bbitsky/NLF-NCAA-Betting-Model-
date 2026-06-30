@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football Betting Model — NFL & NCAAF</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --accent: #238636;
+    --accent2: #1f6feb;
+    --accent3: #d29922;
+    --accent4: #da3633;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --nfl: #013369;
+    --ncaa: #8B0000;
+    --green: #3fb950;
+    --yellow: #e3b341;
+    --red: #f85149;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; }
+
+  /* HEADER */
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 20px; font-weight: 700; }
+  header h1 span { color: var(--accent3); }
+  .league-tabs { display: flex; gap: 8px; }
+  .tab { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; font-size: 13px; font-weight: 600; transition: all .2s; }
+  .tab.nfl { color: #6fa8dc; }
+  .tab.nfl.active { background: #013369; border-color: #6fa8dc; color: #fff; }
+  .tab.ncaa { color: #e06666; }
+  .tab.ncaa.active { background: #8B0000; border-color: #e06666; color: #fff; }
+  .tab.both.active { background: var(--accent); border-color: var(--green); color: #fff; }
+
+  /* LAYOUT */
+  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 0; height: calc(100vh - 57px); }
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; padding: 16px; }
+  .main { overflow-y: auto; padding: 20px 24px; }
+
+  /* SECTIONS */
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text2); margin: 16px 0 8px; }
+  .section-title:first-child { margin-top: 0; }
+
+  /* BET TYPE TABS */
+  .bet-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .bet-tab { padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2); transition: all .2s; }
+  .bet-tab.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+  /* FACTOR SLIDERS */
+  .factor-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .factor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .factor-name { font-size: 13px; font-weight: 600; }
+  .factor-badge { font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 700; }
+  .badge-high { background: rgba(63,185,80,.2); color: var(--green); }
+  .badge-med { background: rgba(227,179,65,.2); color: var(--yellow); }
+  .badge-low { background: rgba(139,148,158,.2); color: var(--text2); }
+  .factor-weight { display: flex; align-items: center; gap: 8px; }
+  .factor-weight input[type=range] { flex: 1; accent-color: var(--accent2); height: 4px; }
+  .weight-val { font-size: 12px; font-weight: 700; color: var(--accent2); width: 32px; text-align: right; }
+  .factor-desc { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* GAME INPUT */
+  .game-input { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+  .game-input h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .matchup-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .team-col { display: flex; flex-direction: column; gap: 6px; }
+  .team-col label { font-size: 11px; color: var(--text2); font-weight: 600; text-transform: uppercase; }
+  .team-col input, .team-col select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: 6px; font-size: 13px; width: 100%; }
+  .vs-badge { font-size: 18px; font-weight: 900; color: var(--text2); text-align: center; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 11px; color: var(--text2); font-weight: 600; text-transform: uppercase; }
+  .form-group input, .form-group select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: 6px; font-size: 13px; }
+  .calc-btn { width: 100%; margin-top: 12px; padding: 10px; background: var(--accent2); border: none; color: #fff; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity .2s; }
+  .calc-btn:hover { opacity: .85; }
+
+  /* RESULTS */
+  .results-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .result-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+  .result-card .label { font-size: 11px; color: var(--text2); font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .result-card .value { font-size: 22px; font-weight: 800; }
+  .result-card .sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+  .val-green { color: var(--green); }
+  .val-red { color: var(--red); }
+  .val-yellow { color: var(--yellow); }
+  .val-blue { color: #58a6ff; }
+
+  /* FACTOR BREAKDOWN */
+  .breakdown { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+  .breakdown h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .factor-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .factor-bar-name { font-size: 12px; width: 160px; flex-shrink: 0; color: var(--text2); }
+  .factor-bar-wrap { flex: 1; background: var(--bg); border-radius: 4px; height: 8px; overflow: hidden; }
+  .factor-bar-fill { height: 100%; border-radius: 4px; transition: width .5s ease; }
+  .fill-pos { background: var(--green); }
+  .fill-neg { background: var(--red); }
+  .fill-neu { background: var(--yellow); }
+  .factor-bar-val { font-size: 12px; font-weight: 700; width: 40px; text-align: right; }
+
+  /* DATA SOURCES TABLE */
+  .sources-table { width: 100%; border-collapse: collapse; }
+  .sources-table th { background: var(--bg); font-size: 11px; text-transform: uppercase; color: var(--text2); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  .sources-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: top; }
+  .sources-table tr:last-child td { border-bottom: none; }
+  .pill { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+  .pill-free { background: rgba(63,185,80,.2); color: var(--green); }
+  .pill-paid { background: rgba(218,54,51,.2); color: var(--red); }
+  .pill-both { background: rgba(31,111,235,.2); color: #58a6ff; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* FACTORS LEGEND */
+  .factors-section { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+  .factors-section h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .factors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .factor-item { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); }
+  .factor-item .fi-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+  .factor-item .fi-desc { font-size: 11px; color: var(--text2); }
+
+  /* NAV TABS */
+  .main-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .main-tab { padding: 10px 16px; font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .2s; }
+  .main-tab.active { color: var(--text); border-bottom-color: var(--accent2); }
+  .main-tab:hover { color: var(--text); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* CONFIDENCE METER */
+  .confidence-ring { position: relative; display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; margin: 0 auto 6px; }
+  .confidence-ring svg { transform: rotate(-90deg); }
+  .confidence-ring .pct-text { position: absolute; font-size: 18px; font-weight: 800; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* EDGE INDICATOR */
+  .edge-indicator { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; }
+  .edge-good { background: rgba(63,185,80,.1); border: 1px solid rgba(63,185,80,.3); }
+  .edge-bad { background: rgba(248,81,73,.1); border: 1px solid rgba(248,81,73,.3); }
+  .edge-neutral { background: rgba(227,179,65,.1); border: 1px solid rgba(227,179,65,.3); }
+  .edge-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: var(--green); }
+  .dot-red { background: var(--red); }
+  .dot-yellow { background: var(--yellow); }
+  .edge-text { font-size: 13px; font-weight: 600; }
+  .edge-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏈 Football Betting Model <span>PRO</span></h1>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="league-tabs">
+      <div class="tab both active" onclick="setLeague('both',this)">NFL + NCAAF</div>
+      <div class="tab nfl" onclick="setLeague('nfl',this)">NFL Only</div>
+      <div class="tab ncaa" onclick="setLeague('ncaa',this)">NCAAF Only</div>
+    </div>
+    <div style="font-size:11px;color:var(--text2);">Model v1.0 · 2026</div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR: Factor Weights -->
+  <aside class="sidebar">
+    <div class="section-title">Model Factors — Adjust Weights</div>
+    <div class="bet-tabs">
+      <div class="bet-tab active" onclick="setBetType('spread',this)">Spread ATS</div>
+      <div class="bet-tab" onclick="setBetType('total',this)">Totals O/U</div>
+      <div class="bet-tab" onclick="setBetType('ml',this)">Moneyline</div>
+      <div class="bet-tab" onclick="setBetType('props',this)">Props</div>
+    </div>
+
+    <!-- SPREAD FACTORS -->
+    <div id="factors-spread">
+      <div class="section-title">Efficiency Metrics</div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">EPA per Play</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="90" oninput="updateWeight(this,'epa')"><span class="weight-val" id="w-epa">90</span></div>
+        <div class="factor-desc">Expected Points Added per play — best single predictor</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">DVOA / SP+</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="85" oninput="updateWeight(this,'dvoa')"><span class="weight-val" id="w-dvoa">85</span></div>
+        <div class="factor-desc">Defense-adjusted efficiency (NFL: DVOA · NCAAF: SP+)</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Yards per Play Diff</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="65" oninput="updateWeight(this,'ypp')"><span class="weight-val" id="w-ypp">65</span></div>
+        <div class="factor-desc">Team's YPP vs opponent's YPP allowed</div>
+      </div>
+
+      <div class="section-title">Contextual Factors</div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Line Movement</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="80" oninput="updateWeight(this,'line')"><span class="weight-val" id="w-line">80</span></div>
+        <div class="factor-desc">Sharp money signal — steam moves & reverse line movement</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Home Field Advantage</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="55" oninput="updateWeight(this,'home')"><span class="weight-val" id="w-home">55</span></div>
+        <div class="factor-desc">NFL ≈ 2.5 pts · NCAAF ≈ 3–4 pts (conference variance)</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Rest Advantage</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="60" oninput="updateWeight(this,'rest')"><span class="weight-val" id="w-rest">60</span></div>
+        <div class="factor-desc">Bye week, short week (Thu), cross-country travel</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Injury Reports</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="85" oninput="updateWeight(this,'injury')"><span class="weight-val" id="w-injury">85</span></div>
+        <div class="factor-desc">QB, OL, WR1 status — positional value-weighted</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Coaching Tendencies</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="50" oninput="updateWeight(this,'coach')"><span class="weight-val" id="w-coach">50</span></div>
+        <div class="factor-desc">ATS record, 4th-down aggression, pace of play</div>
+      </div>
+
+      <div class="section-title">Environmental</div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Wind Speed</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="75" oninput="updateWeight(this,'wind')"><span class="weight-val" id="w-wind">75</span></div>
+        <div class="factor-desc">&gt;15 mph reduces passing efficiency 8–12%</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Temperature / Precip</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="45" oninput="updateWeight(this,'temp')"><span class="weight-val" id="w-temp">45</span></div>
+        <div class="factor-desc">Below 32°F favors run; rain ↓ scoring ~3–4 pts</div>
+      </div>
+
+      <div class="section-title" id="ncaaf-factors-label">NCAAF-Specific</div>
+      <div class="factor-card" id="f-talent">
+        <div class="factor-header"><span class="factor-name">Talent Gap (Recruiting)</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="80" oninput="updateWeight(this,'talent')"><span class="weight-val" id="w-talent">80</span></div>
+        <div class="factor-desc">247Sports composite ratings — G5 vs P4 mismatches</div>
+      </div>
+      <div class="factor-card" id="f-transfer">
+        <div class="factor-header"><span class="factor-name">Transfer Portal Impact</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="55" oninput="updateWeight(this,'transfer')"><span class="weight-val" id="w-transfer">55</span></div>
+        <div class="factor-desc">Portal gains/losses vs returning production %</div>
+      </div>
+    </div>
+
+    <!-- TOTAL FACTORS -->
+    <div id="factors-total" style="display:none;">
+      <div class="section-title">Scoring Pace</div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Pace of Play</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="85" oninput="updateWeight(this,'pace')"><span class="weight-val" id="w-pace">85</span></div>
+        <div class="factor-desc">Plays per game, snap count, hurry-up usage</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Defensive DVOA/SP+</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="80" oninput="updateWeight(this,'defeff')"><span class="weight-val" id="w-defeff">80</span></div>
+        <div class="factor-desc">Combined defensive efficiency of both teams</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Avg Points Scored/Allowed</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="75" oninput="updateWeight(this,'avgpts')"><span class="weight-val" id="w-avgpts">75</span></div>
+        <div class="factor-desc">Last 5-game rolling average, weighted recency</div>
+      </div>
+      <div class="section-title">Situational</div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Wind (Totals Impact)</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="85" oninput="updateWeight(this,'windtot')"><span class="weight-val" id="w-windtot">85</span></div>
+        <div class="factor-desc">&gt;15mph = lean under; &gt;20mph = strong under</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Game Script Projection</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="60" oninput="updateWeight(this,'script')"><span class="weight-val" id="w-script">60</span></div>
+        <div class="factor-desc">Blowout risk reduces garbage time scoring</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">QB Health / Starter Status</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="80" oninput="updateWeight(this,'qbstat')"><span class="weight-val" id="w-qbstat">80</span></div>
+        <div class="factor-desc">Backup QB dramatically suppresses totals</div>
+      </div>
+    </div>
+
+    <!-- ML FACTORS -->
+    <div id="factors-ml" style="display:none;">
+      <div class="section-title">Win Probability</div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">ELO Rating Diff</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="85" oninput="updateWeight(this,'elo')"><span class="weight-val" id="w-elo">85</span></div>
+        <div class="factor-desc">Cumulative win-quality adjusted rating system</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">SOS (Strength of Schedule)</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="65" oninput="updateWeight(this,'sos')"><span class="weight-val" id="w-sos">65</span></div>
+        <div class="factor-desc">Quality of opponents faced, weighted by recency</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Turnover Margin</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="55" oninput="updateWeight(this,'to')"><span class="weight-val" id="w-to">55</span></div>
+        <div class="factor-desc">Sustainable vs. luck-adjusted TO differential</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">3rd Down Conversion %</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="60" oninput="updateWeight(this,'third')"><span class="weight-val" id="w-third">60</span></div>
+        <div class="factor-desc">Drive-sustaining efficiency proxy</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Red Zone Efficiency</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="65" oninput="updateWeight(this,'rz')"><span class="weight-val" id="w-rz">65</span></div>
+        <div class="factor-desc">TD% inside 20 — offense & defense</div>
+      </div>
+    </div>
+
+    <!-- PROPS FACTORS -->
+    <div id="factors-props" style="display:none;">
+      <div class="section-title">Usage & Role</div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Target Share %</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="90" oninput="updateWeight(this,'tgtshare')"><span class="weight-val" id="w-tgtshare">90</span></div>
+        <div class="factor-desc">Most predictive for receiving props (&gt;25% = elite)</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Snap Count / Usage %</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="85" oninput="updateWeight(this,'snaps')"><span class="weight-val" id="w-snaps">85</span></div>
+        <div class="factor-desc">Role clarity — starter vs. committee back</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Air Yards / aDOT</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="70" oninput="updateWeight(this,'adot')"><span class="weight-val" id="w-adot">70</span></div>
+        <div class="factor-desc">Average depth of target — route tree context</div>
+      </div>
+      <div class="section-title">Matchup</div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Defensive Matchup Grade</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="85" oninput="updateWeight(this,'matchup')"><span class="weight-val" id="w-matchup">85</span></div>
+        <div class="factor-desc">CB/LB grades vs. player position (PFF-based)</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Yards per Carry Efficiency</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="70" oninput="updateWeight(this,'ypc')"><span class="weight-val" id="w-ypc">70</span></div>
+        <div class="factor-desc">Run blocking quality adjusted YPC</div>
+      </div>
+      <div class="section-title">Form & Situation</div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Recent Form (L3–L4 games)</span><span class="factor-badge badge-high">HIGH</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="80" oninput="updateWeight(this,'form')"><span class="weight-val" id="w-form">80</span></div>
+        <div class="factor-desc">Rolling average more predictive than season avg</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Red Zone Targets / Carries</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="65" oninput="updateWeight(this,'rztgt')"><span class="weight-val" id="w-rztgt">65</span></div>
+        <div class="factor-desc">TD equity and points potential inside the 20</div>
+      </div>
+      <div class="factor-card">
+        <div class="factor-header"><span class="factor-name">Weather (Passing Impact)</span><span class="factor-badge badge-med">MED</span></div>
+        <div class="factor-weight"><input type="range" min="0" max="100" value="60" oninput="updateWeight(this,'weath')"><span class="weight-val" id="w-weath">60</span></div>
+        <div class="factor-desc">Wind/rain suppresses passing prop lines</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <button class="calc-btn" style="background:var(--accent);border:none;" onclick="resetWeights()">Reset All Weights to Default</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="main-tabs">
+      <div class="main-tab active" onclick="showMainTab('predictor',this)">🎯 Predictor</div>
+      <div class="main-tab" onclick="showMainTab('factors',this)">📊 Factor Library</div>
+      <div class="main-tab" onclick="showMainTab('datasources',this)">🔗 Data Sources</div>
+      <div class="main-tab" onclick="showMainTab('methodology',this)">📖 Methodology</div>
+    </div>
+
+    <!-- PREDICTOR TAB -->
+    <div id="tab-predictor" class="tab-content active">
+      <div class="game-input">
+        <h3>Enter Matchup</h3>
+        <div class="matchup-row">
+          <div class="team-col">
+            <label>Away Team</label>
+            <input type="text" id="away-team" placeholder="e.g. Kansas City Chiefs" value="Kansas City Chiefs">
+            <input type="number" id="away-epa" placeholder="EPA/Play (e.g. 0.18)" step="0.01" value="0.18">
+          </div>
+          <div class="vs-badge">@</div>
+          <div class="team-col">
+            <label>Home Team</label>
+            <input type="text" id="home-team" placeholder="e.g. Buffalo Bills" value="Buffalo Bills">
+            <input type="number" id="home-epa" placeholder="EPA/Play (e.g. 0.14)" step="0.01" value="0.14">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>League</label>
+            <select id="g-league">
+              <option>NFL</option>
+              <option>NCAAF</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Vegas Line</label>
+            <input type="number" id="g-line" placeholder="e.g. -3.5" step="0.5" value="-3.5">
+          </div>
+          <div class="form-group">
+            <label>O/U Total</label>
+            <input type="number" id="g-total" placeholder="e.g. 47.5" step="0.5" value="47.5">
+          </div>
+          <div class="form-group">
+            <label>Wind (mph)</label>
+            <input type="number" id="g-wind" placeholder="e.g. 12" value="8">
+          </div>
+          <div class="form-group">
+            <label>Temp (°F)</label>
+            <input type="number" id="g-temp" placeholder="e.g. 45" value="45">
+          </div>
+          <div class="form-group">
+            <label>Away Rest Days</label>
+            <input type="number" id="g-rest" placeholder="e.g. 7" value="7">
+          </div>
+          <div class="form-group">
+            <label>Home Rest Days</label>
+            <input type="number" id="g-hrest" placeholder="e.g. 14" value="7">
+          </div>
+          <div class="form-group">
+            <label>Away Injuries</label>
+            <select id="g-ainj">
+              <option value="0">None</option>
+              <option value="1">Minor</option>
+              <option value="2">QB Out</option>
+              <option value="3">Multiple Key</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Home Injuries</label>
+            <select id="g-hinj">
+              <option value="0">None</option>
+              <option value="1">Minor</option>
+              <option value="2">QB Out</option>
+              <option value="3">Multiple Key</option>
+            </select>
+          </div>
+        </div>
+        <button class="calc-btn" onclick="calculate()">⚡ Run Model</button>
+      </div>
+
+      <!-- RESULTS (hidden until calculated) -->
+      <div id="results-section" style="display:none;">
+        <div id="edge-indicator" class="edge-indicator"></div>
+
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="label">Model Spread</div>
+            <div class="value val-blue" id="r-spread">–</div>
+            <div class="sub" id="r-spread-sub">vs. Vegas line</div>
+          </div>
+          <div class="result-card">
+            <div class="label">Projected Total</div>
+            <div class="value val-yellow" id="r-total">–</div>
+            <div class="sub" id="r-total-sub">vs. O/U</div>
+          </div>
+          <div class="result-card">
+            <div class="label">Win Probability</div>
+            <div class="confidence-ring" id="r-ring">
+              <svg width="80" height="80"><circle cx="40" cy="40" r="32" fill="none" stroke="#30363d" stroke-width="8"/><circle id="ring-circle" cx="40" cy="40" r="32" fill="none" stroke="#58a6ff" stroke-width="8" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"/></svg>
+              <span class="pct-text val-blue" id="r-winpct">–</span>
+            </div>
+            <div class="sub" id="r-winner">Favorite</div>
+          </div>
+          <div class="result-card">
+            <div class="label">Model Edge</div>
+            <div class="value" id="r-edge">–</div>
+            <div class="sub" id="r-edge-sub">vs. market line</div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <h3>Factor Contribution Breakdown</h3>
+          <div id="factor-bars"></div>
+        </div>
+
+        <div class="results-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="result-card" style="text-align:left;">
+            <div class="label" style="margin-bottom:8px;">📋 Bet Recommendations</div>
+            <div id="r-recs" style="font-size:13px;line-height:1.8;"></div>
+          </div>
+          <div class="result-card" style="text-align:left;">
+            <div class="label" style="margin-bottom:8px;">⚠️ Risk Flags</div>
+            <div id="r-flags" style="font-size:13px;line-height:1.8;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FACTOR LIBRARY TAB -->
+    <div id="tab-factors" class="tab-content">
+      <div class="factors-section">
+        <h3>🏈 NFL Key Predictive Factors</h3>
+        <div class="factors-grid">
+          <div class="factor-item"><div class="fi-name">EPA per Play</div><div class="fi-desc">Best single predictor. Measures scoring value of every play beyond down/distance expectation.</div></div>
+          <div class="factor-item"><div class="fi-name">DVOA</div><div class="fi-desc">Football Outsiders' Defense-adjusted Value Over Average. Context-adjusts for opponent quality.</div></div>
+          <div class="factor-item"><div class="fi-name">PFF Grades</div><div class="fi-desc">Pro Football Focus unit grades (OL, secondary, pass rush) — critical for props & totals.</div></div>
+          <div class="factor-item"><div class="fi-name">Line Movement / Sharp $</div><div class="fi-desc">Steam moves & reverse line movement signal sharp bettor consensus. Follow sharp, not public.</div></div>
+          <div class="factor-item"><div class="fi-name">Injury Report</div><div class="fi-desc">QB &gt; OL &gt; WR1 &gt; RB in positional value hierarchy. Wednesday–Friday report changes move lines.</div></div>
+          <div class="factor-item"><div class="fi-name">Bye Week Bounce</div><div class="fi-desc">Post-bye teams historically +1.5 pts better ATS. Rest disadvantage teams go under more often.</div></div>
+          <div class="factor-item"><div class="fi-name">Referee Tendencies</div><div class="fi-desc">Flags/game, PI rate, holding rate — high-flag refs favor totals going over.</div></div>
+          <div class="factor-item"><div class="fi-name">Division Game Context</div><div class="fi-desc">Division rivals beat the spread at higher rates — familiarity narrows talent gap.</div></div>
+        </div>
+      </div>
+
+      <div class="factors-section">
+        <h3>🎓 NCAAF-Specific Key Factors</h3>
+        <div class="factors-grid">
+          <div class="factor-item"><div class="fi-name">SP+ / FPI Ratings</div><div class="fi-desc">Bill Connelly's SP+ is the gold standard. More predictive than W-L record for ATS.</div></div>
+          <div class="factor-item"><div class="fi-name">Recruiting Rankings</div><div class="fi-desc">247Sports composite — massive talent gap in G5 vs P4 matchups. Regresses season-to-season.</div></div>
+          <div class="factor-item"><div class="fi-name">Transfer Portal Net Rating</div><div class="fi-desc">Portal gains/losses relative to returning production %. High impact on early-season lines.</div></div>
+          <div class="factor-item"><div class="fi-name">Returning Production %</div><div class="fi-desc">% of yards/tackles returning from prior year. High returning teams less volatile early.</div></div>
+          <div class="factor-item"><div class="fi-name">Rivalry / Emotion Factor</div><div class="fi-desc">Rivalry games compress expected margins — talent gaps matter less than in neutral games.</div></div>
+          <div class="factor-item"><div class="fi-name">Travel Distance</div><div class="fi-desc">Cross-country travel (3+ time zones) impacts G5 road teams more than P4.</div></div>
+          <div class="factor-item"><div class="fi-name">Conference SOS</div><div class="fi-desc">P4 non-con scheduling inflates records — adjust SP+ for conference strength.</div></div>
+          <div class="factor-item"><div class="fi-name">Coaching ATS History</div><div class="fi-desc">Some coaches (Saban-era, Dabo) dramatically beat market expectations. Track coach ATS.</div></div>
+        </div>
+      </div>
+
+      <div class="factors-section">
+        <h3>🎯 Player Props Key Factors</h3>
+        <div class="factors-grid">
+          <div class="factor-item"><div class="fi-name">Target Share (&gt;25% = elite)</div><div class="fi-desc">Single most predictive receiving metric. Public lines often lag role changes by 2–3 weeks.</div></div>
+          <div class="factor-item"><div class="fi-name">Air Yards / aDOT</div><div class="fi-desc">Average depth of target reveals route tree and TD equity beyond raw receptions.</div></div>
+          <div class="factor-item"><div class="fi-name">Snap Count / Route % </div><div class="fi-desc">100% routes run + high snap % = volume floor. Committee backs have lower floors.</div></div>
+          <div class="factor-item"><div class="fi-name">CB Shadow Coverage</div><div class="fi-desc">Elite CB following WR1 suppresses targets regardless of receiver talent.</div></div>
+          <div class="factor-item"><div class="fi-name">Game Script (Spread)</div><div class="fi-desc">Projected blowout = more rush attempts for winning RB, fewer targets for trailing WRs.</div></div>
+          <div class="factor-item"><div class="fi-name">Vegas Total (Pass/Rush Split)</div><div class="fi-desc">High O/U = more volume for all skill positions. Low O/U = under on most prop lines.</div></div>
+          <div class="factor-item"><div class="fi-name">Recent Form (L3–L4)</div><div class="fi-desc">More actionable than season averages — catches role changes and system adjustments early.</div></div>
+          <div class="factor-item"><div class="fi-name">Red Zone Usage</div><div class="fi-desc">RZ targets & carries = TD equity. Tracks scoring opportunity regardless of total yardage.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA SOURCES TAB -->
+    <div id="tab-datasources" class="tab-content">
+      <div class="factors-section">
+        <h3>📡 Data Sources Reference</h3>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:16px;">APIs and databases recommended for building your data pipeline. Historical betting lines from The Odds API go back to 2020.</p>
+        <table class="sources-table">
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Coverage</th>
+              <th>Best For</th>
+              <th>Cost</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>College Football Data API</strong></td>
+              <td>NCAAF</td>
+              <td>Game stats, SP+, recruiting, weather, historical lines</td>
+              <td><span class="pill pill-free">FREE</span></td>
+              <td><a href="https://api.collegefootballdata.com" target="_blank">collegefootballdata.com</a></td>
+            </tr>
+            <tr>
+              <td><strong>The Odds API</strong></td>
+              <td>NFL + NCAAF</td>
+              <td>Historical + live lines — moneyline, spread, totals. 40+ books.</td>
+              <td><span class="pill pill-both">Free tier</span></td>
+              <td><a href="https://the-odds-api.com" target="_blank">the-odds-api.com</a></td>
+            </tr>
+            <tr>
+              <td><strong>nflfastR (R / Python)</strong></td>
+              <td>NFL</td>
+              <td>Play-by-play EPA, WPA, DVOA equivalents going back to 1999</td>
+              <td><span class="pill pill-free">FREE</span></td>
+              <td><a href="https://www.nflfastr.com" target="_blank">nflfastr.com</a></td>
+            </tr>
+            <tr>
+              <td><strong>Pro Football Reference</strong></td>
+              <td>NFL</td>
+              <td>Box scores, splits, historical team & player stats</td>
+              <td><span class="pill pill-free">FREE</span></td>
+              <td><a href="https://pro-football-reference.com" target="_blank">pro-football-reference.com</a></td>
+            </tr>
+            <tr>
+              <td><strong>ESPN / FPI</strong></td>
+              <td>NFL + NCAAF</td>
+              <td>FPI ratings, win probability, injury reports</td>
+              <td><span class="pill pill-free">FREE</span></td>
+              <td><a href="https://www.espn.com/college-football/fpi" target="_blank">espn.com/fpi</a></td>
+            </tr>
+            <tr>
+              <td><strong>PFF (Pro Football Focus)</strong></td>
+              <td>NFL + NCAAF</td>
+              <td>Player grades, snap counts, target share, coverage data</td>
+              <td><span class="pill pill-paid">PAID ~$60/yr</span></td>
+              <td><a href="https://www.pff.com" target="_blank">pff.com</a></td>
+            </tr>
+            <tr>
+              <td><strong>BallDontLie API</strong></td>
+              <td>NFL + NCAAF</td>
+              <td>Multi-sport stats API with free tier for volume scraping</td>
+              <td><span class="pill pill-both">Free tier</span></td>
+              <td><a href="https://www.balldontlie.io" target="_blank">balldontlie.io</a></td>
+            </tr>
+            <tr>
+              <td><strong>247Sports / Rivals</strong></td>
+              <td>NCAAF</td>
+              <td>Recruiting composite rankings, transfer portal ratings</td>
+              <td><span class="pill pill-both">Free/Paid</span></td>
+              <td><a href="https://247sports.com" target="_blank">247sports.com</a></td>
+            </tr>
+            <tr>
+              <td><strong>EVAnalytics</strong></td>
+              <td>NFL + NCAAF</td>
+              <td>ATS/OU models, player prop sheet, projected lines</td>
+              <td><span class="pill pill-both">Free/Paid</span></td>
+              <td><a href="https://evanalytics.com" target="_blank">evanalytics.com</a></td>
+            </tr>
+            <tr>
+              <td><strong>Open-Meteo / Weather API</strong></td>
+              <td>All</td>
+              <td>Historical + forecast weather for outdoor stadiums</td>
+              <td><span class="pill pill-free">FREE</span></td>
+              <td><a href="https://open-meteo.com" target="_blank">open-meteo.com</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- METHODOLOGY TAB -->
+    <div id="tab-methodology" class="tab-content">
+      <div class="factors-section">
+        <h3>📖 Model Methodology</h3>
+        <div style="line-height:1.8;font-size:13px;color:var(--text2);">
+          <p style="margin-bottom:12px;"><strong style="color:var(--text);">Phase 1 — Data Collection</strong><br>
+          Pull historical game data (2015–present) from nflfastR, CFBD API, and The Odds API. Merge betting lines, weather data, injury reports, and team efficiency metrics into a unified game-level dataset.</p>
+
+          <p style="margin-bottom:12px;"><strong style="color:var(--text);">Phase 2 — Feature Engineering</strong><br>
+          Compute rolling averages (L3, L5, season) for EPA/play, yards/play, turnover margin, and pace. Calculate home-field values by stadium/conference. Flag weather games (&gt;15 mph wind, &lt;32°F, precipitation).</p>
+
+          <p style="margin-bottom:12px;"><strong style="color:var(--text);">Phase 3 — Model Training</strong><br>
+          Train separate models for spread, totals, and moneyline using gradient boosting (XGBoost). Validate on holdout seasons. Target 55–58% ATS accuracy for spread model (break-even ~52.4% at -110 juice). Total model targets 54–56%.</p>
+
+          <p style="margin-bottom:12px;"><strong style="color:var(--text);">Phase 4 — Line Comparison & Edge Detection</strong><br>
+          Compare model's implied spread to opening Vegas line. Edge = |model_spread − vegas_line|. Bet only when edge ≥ 2.0 pts (spread) or ≥ 1.5 pts (totals). Track CLV (closing line value) as model quality metric.</p>
+
+          <p style="margin-bottom:12px;"><strong style="color:var(--text);">Phase 5 — Props Pipeline</strong><br>
+          Scrape projected usage (PFF/EVAnalytics), match to defensive grades, apply game script projection. Compare model projection to book line. Props edge threshold: ≥ 10% probability advantage vs. implied book odds.</p>
+
+          <p style="margin-bottom:12px;"><strong style="color:var(--text);">Kelly Criterion Sizing</strong><br>
+          Bet size = (edge × odds) / (odds² − 1) × bankroll. Use half-Kelly or quarter-Kelly to reduce variance. Never bet more than 5% of bankroll on a single game.</p>
+
+          <p><strong style="color:var(--text);">Recommended Stack</strong><br>
+          Python (pandas, sklearn, xgboost) · nflfastR via nfl4th · CFBD Python client · Jupyter for EDA · SQLite for local storage · This dashboard for visualization.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ==================== STATE ====================
+let currentBetType = 'spread';
+let currentLeague = 'both';
+let weights = {
+  // spread
+  epa:90, dvoa:85, ypp:65, line:80, home:55, rest:60, injury:85, coach:50, wind:75, temp:45, talent:80, transfer:55,
+  // totals
+  pace:85, defeff:80, avgpts:75, windtot:85, script:60, qbstat:80,
+  // ml
+  elo:85, sos:65, to:55, third:60, rz:65,
+  // props
+  tgtshare:90, snaps:85, adot:70, matchup:85, ypc:70, form:80, rztgt:65, weath:60
+};
+
+function updateWeight(el, key) {
+  weights[key] = parseInt(el.value);
+  document.getElementById('w-'+key).textContent = el.value;
+}
+
+function resetWeights() {
+  // reset all sliders to default values stored in HTML
+  document.querySelectorAll('input[type=range]').forEach(el => {
+    const key = el.getAttribute('oninput').match(/'(\w+)'/)[1];
+    el.value = el.defaultValue;
+    weights[key] = parseInt(el.defaultValue);
+    document.getElementById('w-'+key).textContent = el.defaultValue;
+  });
+}
+
+// ==================== TABS ====================
+function setLeague(league, el) {
+  currentLeague = league;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  // show/hide NCAAF-specific factors
+  const show = league === 'ncaa' || league === 'both';
+  ['f-talent','f-transfer','ncaaf-factors-label'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? '' : 'none';
+  });
+}
+
+function setBetType(type, el) {
+  currentBetType = type;
+  document.querySelectorAll('.bet-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['spread','total','ml','props'].forEach(t => {
+    const panel = document.getElementById('factors-'+t);
+    if (panel) panel.style.display = t === type ? '' : 'none';
+  });
+}
+
+function showMainTab(id, el) {
+  document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// ==================== CALCULATE ====================
+function calculate() {
+  const awayEPA = parseFloat(document.getElementById('away-epa').value) || 0.1;
+  const homeEPA = parseFloat(document.getElementById('home-epa').value) || 0.1;
+  const vegasLine = parseFloat(document.getElementById('g-line').value) || -3;
+  const vegasTotal = parseFloat(document.getElementById('g-total').value) || 47;
+  const wind = parseInt(document.getElementById('g-wind').value) || 5;
+  const temp = parseInt(document.getElementById('g-temp').value) || 60;
+  const awayRest = parseInt(document.getElementById('g-rest').value) || 7;
+  const homeRest = parseInt(document.getElementById('g-hrest').value) || 7;
+  const awayInj = parseInt(document.getElementById('g-ainj').value) || 0;
+  const homeInj = parseInt(document.getElementById('g-hinj').value) || 0;
+  const league = document.getElementById('g-league').value;
+  const awayName = document.getElementById('away-team').value || 'Away';
+  const homeName = document.getElementById('home-team').value || 'Home';
+
+  // ---- EPA factor ----
+  const epaDiff = awayEPA - homeEPA;  // positive = away better
+  const epaSpreadContrib = epaDiff * (weights.epa / 100) * 14; // scale to points
+
+  // ---- Home field ----
+  const hfa = league === 'NCAAF' ? 3.5 : 2.5;
+  const hfaContrib = hfa * (weights.home / 100);
+
+  // ---- Rest ----
+  const restDiff = homeRest - awayRest;
+  const restContrib = (restDiff > 3 ? 1.5 : restDiff < -3 ? -1.5 : restDiff * 0.3) * (weights.rest / 100);
+
+  // ---- Injury ----
+  const injPts = [0, -1, -5, -3];
+  const injContrib = (injPts[homeInj] - injPts[awayInj]) * (weights.injury / 100);
+
+  // ---- Wind impact on total ----
+  let windTotalAdj = 0;
+  if (wind > 20) windTotalAdj = -6;
+  else if (wind > 15) windTotalAdj = -3.5;
+  else if (wind > 10) windTotalAdj = -1.5;
+
+  // ---- Temp impact ----
+  let tempAdj = 0;
+  if (temp < 20) tempAdj = -4;
+  else if (temp < 32) tempAdj = -2;
+  else if (temp < 40) tempAdj = -1;
+
+  // ---- Total projection ----
+  const baseTotal = vegasTotal + windTotalAdj * (weights.wind / 100) + tempAdj * (weights.temp / 100);
+
+  // ---- Spread calculation ----
+  // negative = home favored (matching Vegas convention: negative = away favored if spread is from away POV)
+  // We'll do: modelSpread from HOME perspective (negative = home fav)
+  const rawSpread = -(epaSpreadContrib + hfaContrib + restContrib + injContrib);
+  const modelSpread = Math.round(rawSpread * 2) / 2; // round to .5
+
+  // ---- Edge ----
+  const edge = modelSpread - vegasLine;  // both from same perspective
+
+  // ---- Win probability (using logistic on spread) ----
+  const spreadForProb = modelSpread;
+  const homeWinProb = Math.round(100 / (1 + Math.exp(spreadForProb * 0.15)));
+  const winnerName = homeWinProb > 50 ? homeName : awayName;
+  const winPct = homeWinProb > 50 ? homeWinProb : 100 - homeWinProb;
+
+  // ---- Display ----
+  document.getElementById('results-section').style.display = 'block';
+
+  // Spread
+  const spreadStr = modelSpread === 0 ? 'PK' : (modelSpread > 0 ? '+' + modelSpread.toFixed(1) : modelSpread.toFixed(1));
+  document.getElementById('r-spread').textContent = spreadStr;
+  document.getElementById('r-spread').className = 'value ' + (modelSpread < 0 ? 'val-green' : 'val-red');
+  document.getElementById('r-spread-sub').textContent = 'Model line (home perspective)';
+
+  // Total
+  const totalColor = baseTotal > vegasTotal ? 'val-green' : 'val-red';
+  document.getElementById('r-total').textContent = baseTotal.toFixed(1);
+  document.getElementById('r-total').className = 'value ' + totalColor;
+  const totalDir = baseTotal > vegasTotal ? '▲ OVER' : '▼ UNDER';
+  document.getElementById('r-total-sub').textContent = totalDir + ' (Vegas: ' + vegasTotal + ')';
+
+  // Win prob ring
+  document.getElementById('r-winpct').textContent = winPct + '%';
+  document.getElementById('r-winner').textContent = winnerName + ' wins';
+  const circumference = 201;
+  const offset = circumference - (winPct / 100 * circumference);
+  document.getElementById('ring-circle').setAttribute('stroke-dashoffset', offset);
+
+  // Edge
+  const edgeAbs = Math.abs(edge);
+  document.getElementById('r-edge').textContent = edgeAbs.toFixed(1) + ' pts';
+  document.getElementById('r-edge').className = 'value ' + (edgeAbs >= 2 ? 'val-green' : edgeAbs >= 1 ? 'val-yellow' : 'val-red');
+  const betSide = edge > 0 ? awayName + ' +' + Math.abs(vegasLine).toFixed(1) : homeName + ' ' + vegasLine.toFixed(1);
+  document.getElementById('r-edge-sub').textContent = 'Lean: ' + betSide;
+
+  // Edge indicator
+  const edgeEl = document.getElementById('edge-indicator');
+  if (edgeAbs >= 2) {
+    edgeEl.className = 'edge-indicator edge-good';
+    edgeEl.innerHTML = `<div class="edge-dot dot-green"></div><div><div class="edge-text">Strong Edge Detected — Model disagrees with Vegas by ${edgeAbs.toFixed(1)} pts</div><div class="edge-sub">Threshold met (&gt;2.0 pts). Consider betting on model side.</div></div>`;
+  } else if (edgeAbs >= 1) {
+    edgeEl.className = 'edge-indicator edge-neutral';
+    edgeEl.innerHTML = `<div class="edge-dot dot-yellow"></div><div><div class="edge-text">Marginal Edge — ${edgeAbs.toFixed(1)} pts vs. Vegas</div><div class="edge-sub">Below 2.0 pt threshold. Monitor line movement before betting.</div></div>`;
+  } else {
+    edgeEl.className = 'edge-indicator edge-bad';
+    edgeEl.innerHTML = `<div class="edge-dot dot-red"></div><div><div class="edge-text">No Edge — Model aligns with Vegas (&lt;1 pt difference)</div><div class="edge-sub">Pass on this game. Look for better spots.</div></div>`;
+  }
+
+  // Factor bars
+  const factors = [
+    { name: 'EPA Differential', value: epaSpreadContrib, max: 5 },
+    { name: 'Home Field Advantage', value: hfaContrib, max: 4 },
+    { name: 'Rest Advantage', value: restContrib, max: 2 },
+    { name: 'Injury Impact', value: injContrib, max: 5 },
+    { name: 'Wind (Total Adj)', value: windTotalAdj * (weights.wind/100), max: 6 },
+    { name: 'Temperature', value: tempAdj * (weights.temp/100), max: 4 },
+  ];
+
+  let barsHTML = '';
+  factors.forEach(f => {
+    const pct = Math.min(Math.abs(f.value) / f.max * 100, 100);
+    const cls = f.value > 0.1 ? 'fill-pos' : f.value < -0.1 ? 'fill-neg' : 'fill-neu';
+    const valStr = (f.value >= 0 ? '+' : '') + f.value.toFixed(2) + ' pts';
+    barsHTML += `<div class="factor-bar-row">
+      <div class="factor-bar-name">${f.name}</div>
+      <div class="factor-bar-wrap"><div class="factor-bar-fill ${cls}" style="width:${pct}%"></div></div>
+      <div class="factor-bar-val" style="color:${f.value>0.1?'var(--green)':f.value<-0.1?'var(--red)':'var(--yellow)'}">${valStr}</div>
+    </div>`;
+  });
+  document.getElementById('factor-bars').innerHTML = barsHTML;
+
+  // Recommendations
+  const recs = [];
+  if (edgeAbs >= 2) {
+    const side = edge > 0 ? awayName : homeName;
+    const lineStr = edge > 0 ? '+' + Math.abs(vegasLine).toFixed(1) : vegasLine.toFixed(1);
+    recs.push(`✅ <strong>Spread:</strong> ${side} ${lineStr} (${edgeAbs.toFixed(1)} pt edge)`);
+  } else {
+    recs.push(`⏭️ <strong>Spread:</strong> Pass — insufficient edge`);
+  }
+  const totalEdge = Math.abs(baseTotal - vegasTotal);
+  if (totalEdge >= 1.5) {
+    recs.push(`✅ <strong>Total:</strong> ${totalDir} ${vegasTotal} (model: ${baseTotal.toFixed(1)})`);
+  } else {
+    recs.push(`⏭️ <strong>Total:</strong> Pass — model within 1.5 of line`);
+  }
+  recs.push(`📊 <strong>ML:</strong> ${winnerName} implied at ${winPct}% win prob`);
+  document.getElementById('r-recs').innerHTML = recs.join('<br>');
+
+  // Risk flags
+  const flags = [];
+  if (wind > 15) flags.push(`💨 Wind ${wind}mph — passing props at risk`);
+  if (temp < 32) flags.push(`🥶 Freezing temps — lean rush, lean under`);
+  if (awayInj >= 2) flags.push(`🏥 ${awayName} major injury — line may already move`);
+  if (homeInj >= 2) flags.push(`🏥 ${homeName} major injury — revisit post-report`);
+  if (awayRest <= 4 || homeRest <= 4) flags.push(`😴 Short rest (&lt;5 days) — injury accumulation risk`);
+  if (flags.length === 0) flags.push(`✅ No major risk flags identified`);
+  document.getElementById('r-flags').innerHTML = flags.join('<br>');
+
+  // Scroll to results
+  document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Run once on load to show sample
+window.onload = () => calculate();
+</script>
+</body>
+</html>

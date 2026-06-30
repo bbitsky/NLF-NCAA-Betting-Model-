@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFL & NCAAF Betting Model — 2026 Picks Dashboard</title>
+<style>
+  :root {
+    --bg:#0f1117; --card:#1a1d27; --border:#2a2d3a; --text:#e8eaf0;
+    --muted:#7a7f95; --green:#22c55e; --gold:#f59e0b; --blue:#3b82f6;
+    --red:#ef4444; --purple:#a855f7; --orange:#fb923c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.5}
+
+  /* ── Header ── */
+  .header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .header h1{font-size:19px;font-weight:700;letter-spacing:-.3px}
+  .header h1 .nfl{color:var(--blue)}
+  .header h1 .ncaaf{color:var(--orange)}
+  .header-right{color:var(--muted);font-size:11px;text-align:right}
+  .live-badge{display:inline-block;background:var(--green);color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.5px}
+
+  /* ── Sport tabs ── */
+  .sport-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 24px;background:var(--card)}
+  .sport-tab{padding:12px 22px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;transition:all .15s}
+  .sport-tab:hover{color:var(--text)}
+  .sport-tab.active.nfl{color:var(--blue);border-color:var(--blue)}
+  .sport-tab.active.ncaaf{color:var(--orange);border-color:var(--orange)}
+
+  /* ── Model stats ── */
+  .stats-bar{display:flex;gap:12px;padding:16px 24px}
+  .stat-card{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px}
+  .stat-card .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+  .stat-card .value{font-size:26px;font-weight:800;letter-spacing:-1px}
+  .stat-card .sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .stat-nfl1 .value{color:var(--green)}
+  .stat-nfl2 .value{color:var(--blue)}
+  .stat-ncaaf .value{color:var(--orange)}
+  .stat-games .value{color:var(--text)}
+
+  /* ── Top picks ── */
+  .section{padding:0 24px 20px}
+  .section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;padding-top:8px}
+  .top-picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:4px}
+  .pick-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative;overflow:hidden}
+  .pick-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .pick-card.nfl::before{background:linear-gradient(90deg,#3b82f6,#1d4ed8)}
+  .pick-card.ncaaf::before{background:linear-gradient(90deg,#fb923c,#ea580c)}
+  .pick-card .matchup{font-size:11px;color:var(--muted);margin-bottom:5px}
+  .pick-card .pick{font-size:14px;font-weight:700;margin-bottom:8px}
+  .conf-row{display:flex;align-items:center;gap:8px}
+  .conf-bar-bg{flex:1;height:5px;background:var(--border);border-radius:3px}
+  .conf-bar-fill{height:5px;border-radius:3px}
+  .conf-pct{font-size:13px;font-weight:700;min-width:42px;text-align:right}
+  .pick-meta{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--muted)}
+  .pick-meta .kelly{color:var(--gold);font-weight:600}
+
+  /* ── Controls ── */
+  .controls{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .week-tabs{display:flex;gap:5px;flex-wrap:wrap}
+  .week-tab{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 11px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;white-space:nowrap}
+  .week-tab.active,.week-tab:hover{color:#fff}
+  .nfl-active .week-tab.active,.nfl-active .week-tab:hover{background:var(--blue);border-color:var(--blue)}
+  .ncaaf-active .week-tab.active,.ncaaf-active .week-tab:hover{background:var(--orange);border-color:var(--orange)}
+  .toggle{display:flex;align-items:center;gap:5px;margin-left:auto;font-size:12px;color:var(--muted);cursor:pointer;white-space:nowrap}
+  .toggle input{accent-color:var(--green);cursor:pointer}
+
+  /* ── Table ── */
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  table{width:100%;border-collapse:collapse}
+  thead th{background:rgba(255,255,255,.04);padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600;cursor:pointer;white-space:nowrap;user-select:none}
+  thead th:hover{color:var(--text)}
+  tbody tr{border-top:1px solid var(--border);transition:background .1s}
+  tbody tr:hover{background:rgba(255,255,255,.03)}
+  tbody tr.edge-row{background:rgba(34,197,94,.04)}
+  td{padding:9px 12px;vertical-align:middle;white-space:nowrap}
+  .td-matchup{font-size:13px;font-weight:500;white-space:normal;max-width:220px}
+  .td-date{color:var(--muted);font-size:11px}
+  .td-spread{font-size:13px;font-weight:600;text-align:center}
+  .mini-bar-bg{width:55px;height:4px;background:var(--border);border-radius:2px;display:inline-block;vertical-align:middle;margin-right:4px}
+  .mini-bar-fill{height:4px;border-radius:2px;display:block}
+  .conf-num{font-size:12px;font-weight:700}
+  .edge-badge{background:rgba(34,197,94,.15);color:var(--green);font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
+  .no-edge{color:var(--muted);font-size:11px}
+  .td-kelly{color:var(--gold);font-weight:600;font-size:12px;text-align:center}
+  .pred{color:var(--muted);font-size:11px;text-align:center}
+  .move-up{color:#22c55e;font-weight:700;font-size:11px}
+  .move-dn{color:#ef4444;font-weight:700;font-size:11px}
+  .move-flat{color:var(--muted);font-size:11px}
+  .inj-flag{color:#f59e0b;font-size:10px;font-weight:600;background:rgba(245,158,11,.12);padding:2px 6px;border-radius:4px;white-space:nowrap}
+  .summary-bar{display:flex;gap:20px;padding:10px 14px;font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
+  .summary-bar span{color:var(--text);font-weight:600}
+
+  /* ── Hidden ── */
+  .sport-panel{display:none}
+  .sport-panel.active{display:block}
+
+  /* ── Tracker tab color ── */
+  .sport-tab.active.tracker{color:var(--green);border-color:var(--green)}
+
+  /* ── Bankroll hero ── */
+  .bankroll-hero{display:flex;align-items:stretch;gap:12px;padding:16px 24px;flex-wrap:wrap}
+  .bk-main{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 24px;display:flex;flex-direction:column;justify-content:center;min-width:220px}
+  .bk-main .bk-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+  .bk-main .bk-value{font-size:38px;font-weight:900;letter-spacing:-1.5px;color:var(--green);line-height:1}
+  .bk-main .bk-sub{font-size:11px;color:var(--muted);margin-top:4px}
+  .bk-stat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;min-width:130px}
+  .bk-stat .bk-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+  .bk-stat .bk-value{font-size:24px;font-weight:800;letter-spacing:-0.5px}
+  .bk-stat .bk-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+  /* ── Starting bankroll edit ── */
+  .bk-edit-row{display:flex;align-items:center;gap:8px;padding:0 24px 14px;flex-wrap:wrap}
+  .bk-edit-label{font-size:12px;color:var(--muted)}
+  .bk-edit-wrap{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 12px}
+  .bk-edit-wrap span{font-size:13px;color:var(--muted)}
+  #bk-start-input{background:none;border:none;color:var(--text);font-size:15px;font-weight:700;width:110px;outline:none}
+  #bk-start-input:focus{color:var(--green)}
+  .bk-save-btn{background:var(--green);color:#000;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer}
+  .bk-save-btn:hover{opacity:.85}
+
+  /* ── Unit chart ── */
+  .unit-chart-wrap{padding:0 24px 16px}
+  .unit-chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px}
+  .unit-chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+  .unit-chart-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .unit-chart-legend{display:flex;gap:16px;font-size:11px}
+  .legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+  .unit-chart-empty{text-align:center;color:var(--muted);padding:40px;font-size:12px}
+
+  /* ── Add bet form ── */
+  .bet-form-wrap{padding:0 24px 16px}
+  .bet-form-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
+  .bet-form-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px}
+  .bet-form-grid{display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr;gap:8px;align-items:end;flex-wrap:wrap}
+  .bet-field{display:flex;flex-direction:column;gap:4px}
+  .bet-field label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
+  .bet-field input,.bet-field select{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;padding:7px 10px;outline:none;transition:border-color .15s}
+  .bet-field input:focus,.bet-field select:focus{border-color:var(--green)}
+  .bet-field select option{background:var(--card)}
+  .add-bet-btn{background:var(--green);color:#000;border:none;border-radius:6px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;height:36px}
+  .add-bet-btn:hover{opacity:.85}
+  .bet-form-row2{display:flex;gap:8px;margin-top:8px;align-items:end;flex-wrap:wrap}
+
+  /* ── Bet history ── */
+  .bet-history-wrap{padding:0 24px 24px}
+  .bh-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .bh-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .bh-clear-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;padding:3px 10px;cursor:pointer}
+  .bh-clear-btn:hover{color:var(--red);border-color:var(--red)}
+  .bh-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .bh-table-wrap table{width:100%;border-collapse:collapse}
+  .bh-table-wrap thead th{background:rgba(255,255,255,.04);padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600;white-space:nowrap}
+  .bh-table-wrap tbody tr{border-top:1px solid var(--border)}
+  .bh-table-wrap tbody tr:hover{background:rgba(255,255,255,.02)}
+  .bh-table-wrap td{padding:9px 12px;font-size:12px;vertical-align:middle}
+  .bh-empty{text-align:center;color:var(--muted);padding:32px;font-size:13px}
+  .res-btns{display:flex;gap:4px}
+  .res-btn{border:none;border-radius:4px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;transition:all .1s}
+  .res-btn.win{background:rgba(34,197,94,.15);color:var(--green)}
+  .res-btn.win:hover,.res-btn.win.active{background:var(--green);color:#000}
+  .res-btn.loss{background:rgba(239,68,68,.12);color:var(--red)}
+  .res-btn.loss:hover,.res-btn.loss.active{background:var(--red);color:#fff}
+  .res-btn.push{background:rgba(122,127,149,.15);color:var(--muted)}
+  .res-btn.push:hover,.res-btn.push.active{background:var(--muted);color:#000}
+  .del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:4px}
+  .del-btn:hover{color:var(--red)}
+  .pnl-pos{color:var(--green);font-weight:700}
+  .pnl-neg{color:var(--red);font-weight:700}
+  .pnl-zero{color:var(--muted)}
+  .badge-pending{background:rgba(122,127,149,.15);color:var(--muted);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+  .badge-win{background:rgba(34,197,94,.15);color:var(--green);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+  .badge-loss{background:rgba(239,68,68,.12);color:var(--red);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+  .badge-push{background:rgba(122,127,149,.15);color:var(--muted);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+
+  /* ── Modal ── */
+  #modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+  #modal-overlay.open{display:flex}
+  #modal-box{background:var(--card);border:1px solid var(--border);border-radius:14px;width:100%;max-width:660px;max-height:88vh;overflow-y:auto;box-shadow:0 30px 70px rgba(0,0,0,.8)}
+  .modal-close{padding:14px 18px 0;display:flex;justify-content:flex-end}
+  .modal-close button{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 14px;cursor:pointer;font-size:12px;transition:all .15s}
+  .modal-close button:hover{color:var(--text);border-color:var(--text)}
+  .modal-header{padding:12px 22px 16px;border-bottom:1px solid var(--border)}
+  .m-sport-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.8px;padding:2px 8px;border-radius:4px;margin-bottom:8px}
+  .m-sport-tag.nfl{background:rgba(59,130,246,.2);color:var(--blue)}
+  .m-sport-tag.ncaaf{background:rgba(251,146,60,.2);color:var(--orange)}
+  .m-matchup-label{font-size:12px;color:var(--muted);margin-bottom:3px}
+  .m-pick-label{font-size:18px;font-weight:800;margin-bottom:10px}
+  .m-conf-bar{height:7px;background:var(--border);border-radius:4px;margin-bottom:10px;overflow:hidden}
+  .m-conf-fill{height:7px;border-radius:4px;transition:width .4s}
+  .m-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:12px}
+  .m-meta-chip{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-weight:600}
+  .modal-body{display:grid;grid-template-columns:1fr 1fr}
+  .modal-col{padding:18px 20px}
+  .modal-col:first-child{border-right:1px solid var(--border)}
+  .modal-col h3{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;margin-bottom:12px}
+  .modal-col.for-col h3{color:var(--green)}
+  .modal-col.against-col h3{color:var(--red)}
+  .modal-item{font-size:12.5px;line-height:1.6;margin-bottom:10px;color:var(--text);border-left:2px solid var(--border);padding-left:10px}
+  .for-col .modal-item{border-color:rgba(34,197,94,.35)}
+  .against-col .modal-item{border-color:rgba(239,68,68,.35)}
+  .modal-verdict{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .verdict-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+  .verdict-val{font-size:17px;font-weight:800}
+  .pick-card{cursor:pointer;transition:border-color .15s,box-shadow .15s}
+  .pick-card:hover{border-color:rgba(255,255,255,.18);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+  tbody tr{cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🏈 <span class="nfl">NFL</span> &amp; <span class="ncaaf">NCAAF</span> Betting Model &nbsp;2026</h1>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px">XGBoost · Trained on 6,947 NFL + 58,000 NCAAF games</div>
+  </div>
+  <div class="header-right">
+    <span class="live-badge">LIVE</span><br>Generated June 28, 2026
+  </div>
+</div>
+
+<!-- Sport tabs -->
+<div class="sport-tabs" id="sportTabs">
+  <div class="sport-tab active nfl" data-sport="nfl">🏈 NFL (75 games)</div>
+  <div class="sport-tab ncaaf" data-sport="ncaaf">🎓 NCAAF (37 games)</div>
+  <div class="sport-tab tracker" data-sport="tracker">💰 Bet Tracker</div>
+</div>
+
+<!-- ═══════════ NFL PANEL ═══════════ -->
+<div class="sport-panel active" id="panel-nfl">
+
+  <div class="stats-bar">
+    <div class="stat-card stat-nfl1">
+      <div class="label">NFL ATS Accuracy</div>
+      <div class="value">77.5%</div>
+      <div class="sub">78.6% on edge picks · 816 test games</div>
+    </div>
+    <div class="stat-card stat-nfl2">
+      <div class="label">NFL Totals Accuracy</div>
+      <div class="value">50.6%</div>
+      <div class="sub">52.4% on edge picks · 816 test games</div>
+    </div>
+    <div class="stat-card" style="background:var(--card)">
+      <div class="label">Brier Score</div>
+      <div class="value" style="color:var(--green)">0.155</div>
+      <div class="sub">Well-calibrated ATS probabilities</div>
+    </div>
+    <div class="stat-card stat-games">
+      <div class="label">Games This Period</div>
+      <div class="value">75</div>
+      <div class="sub" id="nfl-edge-sub">Loading…</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⭐ Highest Confidence NFL Picks</div>
+    <div class="top-picks" id="nfl-top-picks"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Full NFL Slate</div>
+    <div class="controls nfl-active">
+      <div class="week-tabs" id="nfl-week-tabs"></div>
+      <label class="toggle"><input type="checkbox" id="nfl-edge-only"> Edge picks only (&gt;54%)</label>
+    </div>
+    <div class="table-wrap">
+      <table id="nfl-table">
+        <thead><tr>
+          <th onclick="sortNFL('date')">Date ↕</th>
+          <th onclick="sortNFL('matchup')">Matchup ↕</th>
+          <th onclick="sortNFL('spread_line')" style="text-align:center">Spread ↕</th>
+          <th onclick="sortNFL('ats_pick')">ATS Pick ↕</th>
+          <th onclick="sortNFL('ats_conf_num')" style="text-align:center">Conf ↕</th>
+          <th style="text-align:center">Edge</th>
+          <th onclick="sortNFL('ats_kelly_num')" style="text-align:center">Kelly ↕</th>
+          <th onclick="sortNFL('ats_kelly_num')" style="text-align:center">Units ↕</th>
+          <th style="text-align:center">Line Move</th>
+          <th>Totals Pick</th>
+          <th>Injuries</th>
+        </tr></thead>
+        <tbody id="nfl-tbody"></tbody>
+      </table>
+      <div class="summary-bar">
+        Showing <span id="nfl-show">—</span> of <span id="nfl-total">—</span> games &nbsp;·&nbsp;
+        Edge picks: <span id="nfl-edge-stat">—</span> &nbsp;·&nbsp;
+        Avg conf: <span id="nfl-avg-conf">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ NCAAF PANEL ═══════════ -->
+<div class="sport-panel" id="panel-ncaaf">
+
+  <div class="stats-bar">
+    <div class="stat-card stat-ncaaf">
+      <div class="label">NCAAF Direction Accuracy</div>
+      <div class="value">78.1%</div>
+      <div class="sub">Correct winner picked · 2023–24 test</div>
+    </div>
+    <div class="stat-card" style="background:var(--card)">
+      <div class="label">NCAAF Margin MAE</div>
+      <div class="value" style="color:var(--orange)">11.0 pts</div>
+      <div class="sub">Mean absolute error vs actual margin</div>
+    </div>
+    <div class="stat-card" style="background:var(--card)">
+      <div class="label">Top Feature</div>
+      <div class="value" style="color:var(--purple);font-size:18px">SP+ Diff</div>
+      <div class="sub">46.3% importance · Bill Connelly ratings</div>
+    </div>
+    <div class="stat-card stat-games">
+      <div class="label">Games This Period</div>
+      <div class="value">37</div>
+      <div class="sub" id="ncaaf-edge-sub">Loading…</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⭐ Highest Confidence NCAAF Picks</div>
+    <div class="top-picks" id="ncaaf-top-picks"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Full NCAAF Slate</div>
+    <div class="controls ncaaf-active">
+      <div class="week-tabs" id="ncaaf-week-tabs"></div>
+      <label class="toggle"><input type="checkbox" id="ncaaf-edge-only"> Edge picks only (&gt;54%)</label>
+    </div>
+    <div class="table-wrap">
+      <table id="ncaaf-table">
+        <thead><tr>
+          <th onclick="sortNCAA('date')">Date ↕</th>
+          <th onclick="sortNCAA('matchup')">Matchup ↕</th>
+          <th onclick="sortNCAA('spread_line')" style="text-align:center">Spread ↕</th>
+          <th onclick="sortNCAA('ats_pick')">ATS Pick ↕</th>
+          <th onclick="sortNCAA('ats_conf_num')" style="text-align:center">Conf ↕</th>
+          <th style="text-align:center">Edge</th>
+          <th onclick="sortNCAA('ats_kelly_num')" style="text-align:center">Kelly ↕</th>
+          <th onclick="sortNCAA('ats_kelly_num')" style="text-align:center">Units ↕</th>
+          <th onclick="sortNCAA('pred_margin')" style="text-align:center">Pred Margin ↕</th>
+        </tr></thead>
+        <tbody id="ncaaf-tbody"></tbody>
+      </table>
+      <div class="summary-bar">
+        Showing <span id="ncaaf-show">—</span> of <span id="ncaaf-total">—</span> games &nbsp;·&nbsp;
+        Edge picks: <span id="ncaaf-edge-stat">—</span> &nbsp;·&nbsp;
+        Avg conf: <span id="ncaaf-avg-conf">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ BET TRACKER PANEL ═══════════ -->
+<div class="sport-panel" id="panel-tracker">
+
+  <!-- Starting bankroll edit -->
+  <div class="bk-edit-row">
+    <span class="bk-edit-label">Starting Bankroll:</span>
+    <div class="bk-edit-wrap">
+      <span>$</span>
+      <input type="number" id="bk-start-input" placeholder="1000" min="0" step="any">
+    </div>
+    <button class="bk-save-btn" onclick="saveBankroll()">Set</button>
+    <span style="font-size:11px;color:var(--muted);margin-left:4px">Saved automatically · all bets calculated against this amount</span>
+  </div>
+
+  <!-- Stats hero -->
+  <div class="bankroll-hero">
+    <div class="bk-main">
+      <div class="bk-label">Current Bankroll</div>
+      <div class="bk-value" id="bk-current">$0</div>
+      <div class="bk-sub" id="bk-roi-sub">—</div>
+    </div>
+    <div class="bk-stat">
+      <div class="bk-label">P&amp;L</div>
+      <div class="bk-value" id="bk-pnl">$0</div>
+      <div class="bk-sub">vs starting bankroll</div>
+    </div>
+    <div class="bk-stat">
+      <div class="bk-label">Record</div>
+      <div class="bk-value" id="bk-record" style="color:var(--text)">0-0-0</div>
+      <div class="bk-sub">W · L · P</div>
+    </div>
+    <div class="bk-stat">
+      <div class="bk-label">Win Rate</div>
+      <div class="bk-value" id="bk-winrate" style="color:var(--blue)">—</div>
+      <div class="bk-sub">settled bets only</div>
+    </div>
+    <div class="bk-stat">
+      <div class="bk-label">Units Wagered</div>
+      <div class="bk-value" id="bk-units" style="color:var(--gold)">0u</div>
+      <div class="bk-sub">total action</div>
+    </div>
+  </div>
+
+  <!-- Unit bettor chart -->
+  <div class="unit-chart-wrap">
+    <div class="unit-chart-card">
+      <div class="unit-chart-header">
+        <div class="unit-chart-title">📈 Running P&amp;L by Unit Size (flat bet per pick)</div>
+        <div class="unit-chart-legend">
+          <span><span class="legend-dot" style="background:#22c55e"></span>$10 / unit</span>
+          <span><span class="legend-dot" style="background:#3b82f6"></span>$20 / unit</span>
+          <span><span class="legend-dot" style="background:#f59e0b"></span>$50 / unit</span>
+        </div>
+      </div>
+      <div id="unit-chart-container" style="position:relative;height:220px">
+        <div id="unit-chart-empty" class="unit-chart-empty">No settled bets yet — mark a bet W/L/P to see your chart</div>
+        <canvas id="unit-chart" style="display:none"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add bet form -->
+  <div class="bet-form-wrap">
+    <div class="bet-form-card">
+      <div class="bet-form-title">➕ Add Bet</div>
+      <div class="bet-form-grid">
+        <div class="bet-field">
+          <label>Matchup</label>
+          <input type="text" id="bf-matchup" placeholder="e.g. NE Patriots @ Seattle" list="matchup-list">
+          <datalist id="matchup-list"></datalist>
+        </div>
+        <div class="bet-field">
+          <label>Your Pick</label>
+          <input type="text" id="bf-pick" placeholder="e.g. Patriots +4.2">
+        </div>
+        <div class="bet-field">
+          <label>Odds</label>
+          <input type="text" id="bf-odds" placeholder="-110" value="-110">
+        </div>
+        <div class="bet-field">
+          <label>Bet Amount ($)</label>
+          <input type="number" id="bf-amount" placeholder="100" min="0" step="any">
+        </div>
+        <div class="bet-field">
+          <label>&nbsp;</label>
+          <button class="add-bet-btn" onclick="addBet()">Add Bet</button>
+        </div>
+      </div>
+      <div class="bet-form-row2">
+        <div class="bet-field">
+          <label>Date</label>
+          <input type="date" id="bf-date">
+        </div>
+        <div class="bet-field" style="min-width:160px">
+          <label>Quick-fill from picks</label>
+          <select id="bf-quickfill" onchange="quickFill(this.value)">
+            <option value="">— Select a model pick —</option>
+          </select>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:flex-end">
+          <span style="font-size:11px;color:var(--muted)">Tip: select a pick above to auto-fill matchup &amp; pick</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bet history -->
+  <div class="bet-history-wrap">
+    <div class="bh-header">
+      <div class="bh-title">📋 Bet History</div>
+      <button class="bh-clear-btn" onclick="clearAllBets()">Clear All</button>
+    </div>
+    <div class="bh-table-wrap">
+      <table>
+        <thead><tr>
+          <th>Date</th>
+          <th>Matchup</th>
+          <th>Pick</th>
+          <th style="text-align:center">Odds</th>
+          <th style="text-align:right">Bet</th>
+          <th style="text-align:right">To Win</th>
+          <th style="text-align:center">Result</th>
+          <th style="text-align:right">P&amp;L</th>
+          <th style="text-align:right">Bankroll</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="bh-tbody"><tr><td colspan="10" class="bh-empty">No bets yet — add your first bet above</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL ═══════════ -->
+<div id="modal-overlay" onclick="closeModal()">
+  <div id="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-close"><button onclick="closeModal()">✕ Close</button></div>
+    <div class="modal-header">
+      <div class="m-sport-tag" id="m-sport-tag">NFL</div>
+      <div class="m-matchup-label" id="m-matchup-label"></div>
+      <div class="m-pick-label" id="m-pick-label"></div>
+      <div class="m-conf-bar"><div class="m-conf-fill" id="m-conf-fill"></div></div>
+      <div class="m-meta" id="m-meta"></div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-col for-col">
+        <h3>✅ Reasons to Bet</h3>
+        <div id="m-for"></div>
+      </div>
+      <div class="modal-col against-col">
+        <h3>⚠️ Reasons to Pass</h3>
+        <div id="m-against"></div>
+      </div>
+    </div>
+    <div class="modal-verdict">
+      <div>
+        <div class="verdict-label">Model Verdict</div>
+        <div class="verdict-val" id="m-verdict"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);text-align:right;max-width:260px;line-height:1.5">All picks are model outputs — not guaranteed. Bet responsibly. Quarter-Kelly sizing already applied.</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ════════════════════════════
+// DATA
+// ════════════════════════════
+const NFL = [
+  {date:"2026-09-10",time:"Thu",matchup:"NE Patriots @ Seattle Seahawks",spread_line:-4.2,total_line:44.5,ats_pick:"New England Patriots +4.2",ats_conf_num:86.4,ats_kelly_num:17.9,ats_edge:"YES",tot_pick:"UNDER 44.5",tot_conf:"62.9%"},
+  {date:"2026-09-11",time:"Fri",matchup:"SF 49ers @ LA Rams",spread_line:-3.3,total_line:48.8,ats_pick:"San Francisco 49ers +3.3",ats_conf_num:80.7,ats_kelly_num:14.9,ats_edge:"YES",tot_pick:"UNDER 48.8",tot_conf:"51.1%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Washington @ Philadelphia Eagles",spread_line:-4.8,total_line:47.2,ats_pick:"Washington Commanders +4.8",ats_conf_num:58.1,ats_kelly_num:3.0,ats_edge:"YES",tot_pick:"UNDER 47.2",tot_conf:"57.8%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Miami Dolphins @ Las Vegas Raiders",spread_line:-3.3,total_line:40.8,ats_pick:"Miami Dolphins +3.3",ats_conf_num:78.5,ats_kelly_num:13.7,ats_edge:"YES",tot_pick:"OVER 40.8",tot_conf:"51.0%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Arizona Cardinals @ LA Chargers",spread_line:-10.8,total_line:46.2,ats_pick:"Arizona Cardinals +10.8",ats_conf_num:79.8,ats_kelly_num:14.4,ats_edge:"YES",tot_pick:"UNDER 46.2",tot_conf:"66.3%"},
+  {date:"2026-09-13",time:"Sun",matchup:"NY Jets @ Tennessee Titans",spread_line:-2.7,total_line:38.8,ats_pick:"New York Jets +2.7",ats_conf_num:80.2,ats_kelly_num:14.6,ats_edge:"YES",tot_pick:"OVER 38.8",tot_conf:"52.6%"},
+  {date:"2026-09-13",time:"Sun",matchup:"New Orleans Saints @ Detroit Lions",spread_line:-7.0,total_line:48.8,ats_pick:"New Orleans Saints +7.0",ats_conf_num:85.9,ats_kelly_num:17.6,ats_edge:"YES",tot_pick:"UNDER 48.8",tot_conf:"51.1%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Green Bay Packers @ Minnesota Vikings",spread_line:1.5,total_line:45.2,ats_pick:"Minnesota Vikings +1.5",ats_conf_num:58.0,ats_kelly_num:2.9,ats_edge:"YES",tot_pick:"OVER 45.2",tot_conf:"52.5%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Tampa Bay Buccaneers @ Cincinnati Bengals",spread_line:-3.5,total_line:51.2,ats_pick:"Tampa Bay Buccaneers +3.5",ats_conf_num:74.9,ats_kelly_num:11.8,ats_edge:"YES",tot_pick:"OVER 51.2",tot_conf:"53.4%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Chicago Bears @ Carolina Panthers",spread_line:2.5,total_line:45.2,ats_pick:"Carolina Panthers +2.5",ats_conf_num:57.6,ats_kelly_num:2.7,ats_edge:"YES",tot_pick:"UNDER 45.2",tot_conf:"50.6%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Buffalo Bills @ Houston Texans",spread_line:1.5,total_line:44.8,ats_pick:"Houston Texans +1.5",ats_conf_num:52.5,ats_kelly_num:0.1,ats_edge:"",tot_pick:"UNDER 44.8",tot_conf:"60.0%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Baltimore Ravens @ Indianapolis Colts",spread_line:3.5,total_line:48.8,ats_pick:"Indianapolis Colts +3.5",ats_conf_num:76.2,ats_kelly_num:12.5,ats_edge:"YES",tot_pick:"UNDER 48.8",tot_conf:"57.2%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Atlanta Falcons @ Pittsburgh Steelers",spread_line:-2.8,total_line:41.8,ats_pick:"Atlanta Falcons +2.8",ats_conf_num:62.6,ats_kelly_num:5.4,ats_edge:"YES",tot_pick:"UNDER 41.8",tot_conf:"55.9%"},
+  {date:"2026-09-13",time:"Sun",matchup:"Cleveland Browns @ Jacksonville Jaguars",spread_line:-7.5,total_line:40.5,ats_pick:"Cleveland Browns +7.5",ats_conf_num:76.3,ats_kelly_num:12.5,ats_edge:"YES",tot_pick:"OVER 40.5",tot_conf:"53.8%"},
+  {date:"2026-09-14",time:"Mon",matchup:"Dallas Cowboys @ New York Giants",spread_line:2.2,total_line:48.2,ats_pick:"New York Giants +2.2",ats_conf_num:59.8,ats_kelly_num:3.9,ats_edge:"YES",tot_pick:"UNDER 48.2",tot_conf:"54.3%"},
+  {date:"2026-09-15",time:"Tue",matchup:"Denver Broncos @ Kansas City Chiefs",spread_line:-2.7,total_line:42.8,ats_pick:"Denver Broncos +2.7",ats_conf_num:82.1,ats_kelly_num:15.6,ats_edge:"YES",tot_pick:"OVER 42.8",tot_conf:"58.3%"},
+  {date:"2026-09-18",time:"Fri",matchup:"Detroit Lions @ Buffalo Bills",spread_line:-3.0,total_line:52.5,ats_pick:"Detroit Lions +3.0",ats_conf_num:84.6,ats_kelly_num:16.9,ats_edge:"YES",tot_pick:"OVER 52.5",tot_conf:"53.1%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Jacksonville Jaguars @ Denver Broncos",spread_line:-3.0,total_line:43.5,ats_pick:"Jacksonville Jaguars +3.0",ats_conf_num:73.2,ats_kelly_num:10.9,ats_edge:"YES",tot_pick:"OVER 43.5",tot_conf:"50.2%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Miami Dolphins @ San Francisco 49ers",spread_line:-10.5,total_line:46.5,ats_pick:"Miami Dolphins +10.5",ats_conf_num:93.2,ats_kelly_num:21.4,ats_edge:"YES",tot_pick:"UNDER 46.5",tot_conf:"51.1%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Washington Commanders @ Dallas Cowboys",spread_line:-4.5,total_line:51.5,ats_pick:"Washington Commanders +4.5",ats_conf_num:81.0,ats_kelly_num:15.0,ats_edge:"YES",tot_pick:"UNDER 51.5",tot_conf:"55.1%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Seattle Seahawks @ Arizona Cardinals",spread_line:10.0,total_line:44.5,ats_pick:"Arizona Cardinals +10.0",ats_conf_num:78.1,ats_kelly_num:13.5,ats_edge:"YES",tot_pick:"UNDER 44.5",tot_conf:"64.3%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Las Vegas Raiders @ LA Chargers",spread_line:-8.5,total_line:42.5,ats_pick:"Las Vegas Raiders +8.5",ats_conf_num:90.0,ats_kelly_num:19.8,ats_edge:"YES",tot_pick:"OVER 42.5",tot_conf:"61.6%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Philadelphia Eagles @ Tennessee Titans",spread_line:4.5,total_line:42.5,ats_pick:"Tennessee Titans +4.5",ats_conf_num:82.3,ats_kelly_num:15.7,ats_edge:"YES",tot_pick:"UNDER 42.5",tot_conf:"51.1%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Minnesota Vikings @ Chicago Bears",spread_line:-3.5,total_line:45.5,ats_pick:"Minnesota Vikings +3.5",ats_conf_num:71.7,ats_kelly_num:10.2,ats_edge:"YES",tot_pick:"OVER 45.5",tot_conf:"51.4%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Green Bay Packers @ New York Jets",spread_line:6.5,total_line:42.5,ats_pick:"New York Jets +6.5",ats_conf_num:72.6,ats_kelly_num:10.6,ats_edge:"YES",tot_pick:"OVER 42.5",tot_conf:"50.1%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Cleveland Browns @ Tampa Bay Buccaneers",spread_line:-6.5,total_line:42.5,ats_pick:"Cleveland Browns +6.5",ats_conf_num:87.3,ats_kelly_num:18.3,ats_edge:"YES",tot_pick:"OVER 42.5",tot_conf:"53.9%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Cincinnati Bengals @ Houston Texans",spread_line:-2.5,total_line:46.5,ats_pick:"Cincinnati Bengals +2.5",ats_conf_num:51.3,ats_kelly_num:0,ats_edge:"",tot_pick:"UNDER 46.5",tot_conf:"58.4%"},
+  {date:"2026-09-20",time:"Sun",matchup:"New Orleans Saints @ Baltimore Ravens",spread_line:-7.5,total_line:46.5,ats_pick:"New Orleans Saints +7.5",ats_conf_num:89.9,ats_kelly_num:19.7,ats_edge:"YES",tot_pick:"UNDER 46.5",tot_conf:"50.4%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Carolina Panthers @ Atlanta Falcons",spread_line:-1.5,total_line:43.5,ats_pick:"Carolina Panthers +1.5",ats_conf_num:63.5,ats_kelly_num:5.8,ats_edge:"YES",tot_pick:"OVER 43.5",tot_conf:"51.0%"},
+  {date:"2026-09-20",time:"Sun",matchup:"Pittsburgh Steelers @ NE Patriots",spread_line:-4.5,total_line:43.5,ats_pick:"Pittsburgh Steelers +4.5",ats_conf_num:87.9,ats_kelly_num:18.6,ats_edge:"YES",tot_pick:"OVER 43.5",tot_conf:"56.2%"},
+  {date:"2026-09-21",time:"Mon",matchup:"Indianapolis Colts @ Kansas City Chiefs",spread_line:-5.5,total_line:47.5,ats_pick:"Indianapolis Colts +5.5",ats_conf_num:80.3,ats_kelly_num:14.7,ats_edge:"YES",tot_pick:"OVER 47.5",tot_conf:"52.5%"},
+  {date:"2026-09-22",time:"Tue",matchup:"NY Giants @ LA Rams",spread_line:-9.5,total_line:47.5,ats_pick:"New York Giants +9.5",ats_conf_num:95.0,ats_kelly_num:22.4,ats_edge:"YES",tot_pick:"UNDER 47.5",tot_conf:"59.7%"},
+  {date:"2026-09-25",time:"Fri",matchup:"Atlanta Falcons @ Green Bay Packers",spread_line:-7.5,total_line:46.5,ats_pick:"Atlanta Falcons +7.5",ats_conf_num:92.7,ats_kelly_num:21.2,ats_edge:"YES",tot_pick:"UNDER 46.5",tot_conf:"54.4%"},
+  {date:"2026-09-27",time:"Sun",matchup:"Seattle Seahawks @ Washington Commanders",spread_line:3.5,total_line:46.5,ats_pick:"Washington Commanders +3.5",ats_conf_num:70.3,ats_kelly_num:9.4,ats_edge:"YES",tot_pick:"OVER 46.5",tot_conf:"52.8%"},
+  {date:"2026-09-27",time:"Sun",matchup:"Las Vegas Raiders @ New Orleans Saints",spread_line:-3.0,total_line:42.5,ats_pick:"Las Vegas Raiders +3.0",ats_conf_num:72.9,ats_kelly_num:10.8,ats_edge:"YES",tot_pick:"OVER 42.5",tot_conf:"55.0%"},
+  {date:"2026-09-27",time:"Sun",matchup:"Baltimore Ravens @ Dallas Cowboys",spread_line:2.5,total_line:51.0,ats_pick:"Dallas Cowboys +2.5",ats_conf_num:56.6,ats_kelly_num:2.2,ats_edge:"YES",tot_pick:"UNDER 51.0",tot_conf:"56.7%"},
+  {date:"2026-09-27",time:"Sun",matchup:"Minnesota Vikings @ Tampa Bay Buccaneers",spread_line:-1.5,total_line:44.5,ats_pick:"Minnesota Vikings +1.5",ats_conf_num:72.3,ats_kelly_num:10.4,ats_edge:"YES",tot_pick:"OVER 44.5",tot_conf:"61.3%"},
+  {date:"2026-09-27",time:"Sun",matchup:"Arizona Cardinals @ SF 49ers",spread_line:-11.5,total_line:46.5,ats_pick:"Arizona Cardinals +11.5",ats_conf_num:90.4,ats_kelly_num:20.0,ats_edge:"YES",tot_pick:"OVER 46.5",tot_conf:"53.3%"},
+  {date:"2026-09-27",time:"Sun",matchup:"Tennessee Titans @ New York Giants",spread_line:-3.0,total_line:45.5,ats_pick:"Tennessee Titans +3.0",ats_conf_num:73.5,ats_kelly_num:11.1,ats_edge:"YES",tot_pick:"OVER 45.5",tot_conf:"53.3%"},
+  {date:"2026-09-27",time:"Sun",matchup:"NE Patriots @ Jacksonville Jaguars",spread_line:-1.5,total_line:45.5,ats_pick:"New England Patriots +1.5",ats_conf_num:69.0,ats_kelly_num:8.7,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"62.4%"},
+  {date:"2026-09-27",time:"Sun",matchup:"NY Jets @ Detroit Lions",spread_line:-9.5,total_line:45.5,ats_pick:"New York Jets +9.5",ats_conf_num:89.7,ats_kelly_num:19.6,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"66.4%"},
+  {date:"2026-09-27",time:"Sun",matchup:"Carolina Panthers @ Cleveland Browns",spread_line:2.5,total_line:40.5,ats_pick:"Cleveland Browns +2.5",ats_conf_num:65.7,ats_kelly_num:7.0,ats_edge:"YES",tot_pick:"OVER 40.5",tot_conf:"59.8%"},
+  {date:"2026-09-27",time:"Sun",matchup:"LA Chargers @ Buffalo Bills",spread_line:-2.5,total_line:48.5,ats_pick:"Los Angeles Chargers +2.5",ats_conf_num:71.7,ats_kelly_num:10.1,ats_edge:"YES",tot_pick:"UNDER 48.5",tot_conf:"52.9%"},
+  {date:"2026-09-27",time:"Sun",matchup:"Kansas City Chiefs @ Miami Dolphins",spread_line:7.0,total_line:44.5,ats_pick:"Miami Dolphins +7.0",ats_conf_num:90.6,ats_kelly_num:20.1,ats_edge:"YES",tot_pick:"UNDER 44.5",tot_conf:"52.3%"},
+  {date:"2026-09-28",time:"Mon",matchup:"LA Rams @ Denver Broncos",spread_line:3.0,total_line:45.5,ats_pick:"Denver Broncos +3.0",ats_conf_num:53.0,ats_kelly_num:0.3,ats_edge:"",tot_pick:"OVER 45.5",tot_conf:"52.6%"},
+  {date:"2026-09-29",time:"Tue",matchup:"Philadelphia Eagles @ Chicago Bears",spread_line:-1.5,total_line:46.5,ats_pick:"Philadelphia Eagles +1.5",ats_conf_num:62.4,ats_kelly_num:5.2,ats_edge:"YES",tot_pick:"OVER 46.5",tot_conf:"58.6%"},
+  {date:"2026-10-02",time:"Fri",matchup:"Pittsburgh Steelers @ Cleveland Browns",spread_line:3.0,total_line:41.5,ats_pick:"Cleveland Browns +3.0",ats_conf_num:67.3,ats_kelly_num:7.8,ats_edge:"YES",tot_pick:"OVER 41.5",tot_conf:"57.2%"},
+  {date:"2026-10-04",time:"Sun",matchup:"LA Chargers @ Seattle Seahawks",spread_line:-3.0,total_line:45.5,ats_pick:"Los Angeles Chargers +3.0",ats_conf_num:77.7,ats_kelly_num:13.3,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"63.9%"},
+  {date:"2026-10-04",time:"Sun",matchup:"Kansas City Chiefs @ Las Vegas Raiders",spread_line:5.5,total_line:43.5,ats_pick:"Las Vegas Raiders +5.5",ats_conf_num:73.0,ats_kelly_num:10.8,ats_edge:"YES",tot_pick:"OVER 43.5",tot_conf:"59.3%"},
+  {date:"2026-10-04",time:"Sun",matchup:"Denver Broncos @ SF 49ers",spread_line:-2.5,total_line:46.5,ats_pick:"Denver Broncos +2.5",ats_conf_num:72.9,ats_kelly_num:10.8,ats_edge:"YES",tot_pick:"OVER 46.5",tot_conf:"55.5%"},
+  {date:"2026-10-04",time:"Sun",matchup:"Miami Dolphins @ Minnesota Vikings",spread_line:-7.5,total_line:43.5,ats_pick:"Miami Dolphins +7.5",ats_conf_num:84.8,ats_kelly_num:17.0,ats_edge:"YES",tot_pick:"UNDER 43.5",tot_conf:"51.7%"},
+  {date:"2026-10-04",time:"Sun",matchup:"Dallas Cowboys @ Houston Texans",spread_line:-2.5,total_line:47.5,ats_pick:"Dallas Cowboys +2.5",ats_conf_num:69.1,ats_kelly_num:8.8,ats_edge:"YES",tot_pick:"UNDER 47.5",tot_conf:"51.1%"},
+  {date:"2026-10-04",time:"Sun",matchup:"LA Rams @ Philadelphia Eagles",spread_line:2.5,total_line:47.5,ats_pick:"Philadelphia Eagles +2.5",ats_conf_num:65.8,ats_kelly_num:7.0,ats_edge:"YES",tot_pick:"OVER 47.5",tot_conf:"56.0%"},
+  {date:"2026-10-04",time:"Sun",matchup:"NY Jets @ Chicago Bears",spread_line:-8.5,total_line:45.5,ats_pick:"New York Jets +8.5",ats_conf_num:86.1,ats_kelly_num:17.7,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"62.0%"},
+  {date:"2026-10-04",time:"Sun",matchup:"NE Patriots @ Buffalo Bills",spread_line:-3.0,total_line:49.5,ats_pick:"New England Patriots +3.0",ats_conf_num:81.1,ats_kelly_num:15.1,ats_edge:"YES",tot_pick:"OVER 49.5",tot_conf:"51.4%"},
+  {date:"2026-10-04",time:"Sun",matchup:"Tennessee Titans @ Baltimore Ravens",spread_line:-8.5,total_line:47.5,ats_pick:"Tennessee Titans +8.5",ats_conf_num:86.8,ats_kelly_num:18.0,ats_edge:"YES",tot_pick:"UNDER 47.5",tot_conf:"50.0%"},
+  {date:"2026-10-04",time:"Sun",matchup:"Arizona Cardinals @ NY Giants",spread_line:-7.0,total_line:45.5,ats_pick:"Arizona Cardinals +7.0",ats_conf_num:92.8,ats_kelly_num:21.2,ats_edge:"YES",tot_pick:"OVER 45.5",tot_conf:"55.2%"},
+  {date:"2026-10-04",time:"Sun",matchup:"Indianapolis Colts @ Washington Commanders",spread_line:-1.5,total_line:49.2,ats_pick:"Indianapolis Colts +1.5",ats_conf_num:66.6,ats_kelly_num:7.4,ats_edge:"YES",tot_pick:"OVER 49.2",tot_conf:"50.3%"},
+  {date:"2026-10-04",time:"Sun",matchup:"Jacksonville Jaguars @ Cincinnati Bengals",spread_line:-2.5,total_line:51.5,ats_pick:"Jacksonville Jaguars +2.5",ats_conf_num:66.9,ats_kelly_num:7.6,ats_edge:"YES",tot_pick:"OVER 51.5",tot_conf:"62.3%"},
+  {date:"2026-10-05",time:"Mon",matchup:"Detroit Lions @ Carolina Panthers",spread_line:3.0,total_line:47.5,ats_pick:"Carolina Panthers +3.0",ats_conf_num:80.5,ats_kelly_num:14.7,ats_edge:"YES",tot_pick:"OVER 47.5",tot_conf:"57.2%"},
+  {date:"2026-10-06",time:"Tue",matchup:"Atlanta Falcons @ New Orleans Saints",spread_line:-2.5,total_line:45.5,ats_pick:"Atlanta Falcons +2.5",ats_conf_num:54.9,ats_kelly_num:1.3,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"57.5%"},
+  {date:"2026-10-09",time:"Fri",matchup:"Tampa Bay Buccaneers @ Dallas Cowboys",spread_line:-3.5,total_line:52.5,ats_pick:"Tampa Bay Buccaneers +3.5",ats_conf_num:84.9,ats_kelly_num:17.1,ats_edge:"YES",tot_pick:"UNDER 52.5",tot_conf:"53.7%"},
+  {date:"2026-10-11",time:"Sun",matchup:"NY Giants @ Washington Commanders",spread_line:-2.5,total_line:48.5,ats_pick:"New York Giants +2.5",ats_conf_num:67.0,ats_kelly_num:7.7,ats_edge:"YES",tot_pick:"OVER 48.5",tot_conf:"56.6%"},
+  {date:"2026-10-11",time:"Sun",matchup:"Las Vegas Raiders @ NE Patriots",spread_line:-8.5,total_line:44.5,ats_pick:"Las Vegas Raiders +8.5",ats_conf_num:83.7,ats_kelly_num:16.5,ats_edge:"YES",tot_pick:"UNDER 44.5",tot_conf:"50.8%"},
+  {date:"2026-10-11",time:"Sun",matchup:"Indianapolis Colts @ Pittsburgh Steelers",spread_line:-2.5,total_line:47.5,ats_pick:"Indianapolis Colts +2.5",ats_conf_num:60.2,ats_kelly_num:4.1,ats_edge:"YES",tot_pick:"UNDER 47.5",tot_conf:"51.3%"},
+  {date:"2026-10-11",time:"Sun",matchup:"Cleveland Browns @ NY Jets",spread_line:-2.5,total_line:40.5,ats_pick:"Cleveland Browns +2.5",ats_conf_num:70.8,ats_kelly_num:9.7,ats_edge:"YES",tot_pick:"UNDER 40.5",tot_conf:"60.3%"},
+  {date:"2026-10-11",time:"Sun",matchup:"Cincinnati Bengals @ Miami Dolphins",spread_line:5.5,total_line:49.5,ats_pick:"Miami Dolphins +5.5",ats_conf_num:85.8,ats_kelly_num:17.6,ats_edge:"YES",tot_pick:"UNDER 49.5",tot_conf:"55.9%"},
+  {date:"2026-10-11",time:"Sun",matchup:"Denver Broncos @ LA Chargers",spread_line:-2.5,total_line:44.5,ats_pick:"Denver Broncos +2.5",ats_conf_num:59.8,ats_kelly_num:3.9,ats_edge:"YES",tot_pick:"OVER 44.5",tot_conf:"54.4%"},
+  {date:"2026-10-11",time:"Sun",matchup:"SF 49ers @ Seattle Seahawks",spread_line:-3.5,total_line:48.5,ats_pick:"San Francisco 49ers +3.5",ats_conf_num:70.2,ats_kelly_num:9.4,ats_edge:"YES",tot_pick:"OVER 48.5",tot_conf:"58.9%"},
+];
+
+const NCAAF = [
+  {date:"2026-08-29",matchup:"Clemson @ Georgia",spread_line:-8.5,pred_margin:8.8,ats_pick:"Georgia -8.5",ats_conf_num:62.1,ats_kelly_num:5.3,ats_edge:"YES"},
+  {date:"2026-08-29",matchup:"Texas @ Ohio State",spread_line:-4.5,pred_margin:6.6,ats_pick:"Ohio State -4.5",ats_conf_num:63.2,ats_kelly_num:5.9,ats_edge:"YES"},
+  {date:"2026-08-29",matchup:"Florida State @ Notre Dame",spread_line:-10.5,pred_margin:21.7,ats_pick:"Notre Dame -10.5",ats_conf_num:86.6,ats_kelly_num:18.0,ats_edge:"YES"},
+  {date:"2026-09-05",matchup:"Michigan @ Alabama",spread_line:-7.5,pred_margin:9.9,ats_pick:"Alabama -7.5",ats_conf_num:71.9,ats_kelly_num:10.2,ats_edge:"YES"},
+  {date:"2026-09-05",matchup:"Penn State @ Oregon",spread_line:-3.5,pred_margin:1.3,ats_pick:"Oregon -3.5",ats_conf_num:52.1,ats_kelly_num:0,ats_edge:""},
+  {date:"2026-09-05",matchup:"Oklahoma @ Tennessee",spread_line:-2.5,pred_margin:13.0,ats_pick:"Tennessee -2.5",ats_conf_num:78.3,ats_kelly_num:13.5,ats_edge:"YES"},
+  {date:"2026-09-05",matchup:"USC @ LSU",spread_line:-2.5,pred_margin:3.5,ats_pick:"LSU -2.5",ats_conf_num:61.0,ats_kelly_num:4.6,ats_edge:"YES"},
+  {date:"2026-09-05",matchup:"Texas A&M @ Miami",spread_line:3.5,pred_margin:3.8,ats_pick:"Miami +3.5",ats_conf_num:75.9,ats_kelly_num:12.2,ats_edge:"YES"},
+  {date:"2026-09-05",matchup:"Michigan State @ Indiana",spread_line:-5.5,pred_margin:17.5,ats_pick:"Indiana -5.5",ats_conf_num:89.7,ats_kelly_num:19.6,ats_edge:"YES"},
+  {date:"2026-09-12",matchup:"Ole Miss @ Georgia",spread_line:-8.0,pred_margin:-4.2,ats_pick:"Ole Miss +8.0",ats_conf_num:70.9,ats_kelly_num:9.7,ats_edge:"YES"},
+  {date:"2026-09-12",matchup:"Michigan State @ Ohio State",spread_line:-16.5,pred_margin:19.5,ats_pick:"Ohio State -16.5",ats_conf_num:88.9,ats_kelly_num:19.2,ats_edge:"YES"},
+  {date:"2026-09-12",matchup:"Vanderbilt @ Alabama",spread_line:-22.5,pred_margin:22.0,ats_pick:"Vanderbilt +22.5",ats_conf_num:52.7,ats_kelly_num:0.2,ats_edge:""},
+  {date:"2026-09-12",matchup:"Illinois @ Oregon",spread_line:-13.5,pred_margin:10.0,ats_pick:"Oregon -13.5",ats_conf_num:62.0,ats_kelly_num:5.1,ats_edge:"YES"},
+  {date:"2026-09-12",matchup:"Arkansas @ Tennessee",spread_line:-7.5,pred_margin:8.8,ats_pick:"Tennessee -7.5",ats_conf_num:57.0,ats_kelly_num:2.5,ats_edge:"YES"},
+  {date:"2026-09-12",matchup:"Mississippi State @ LSU",spread_line:-11.5,pred_margin:6.7,ats_pick:"LSU -11.5",ats_conf_num:74.3,ats_kelly_num:11.2,ats_edge:"YES"},
+  {date:"2026-09-12",matchup:"Baylor @ Texas",spread_line:-11.5,pred_margin:11.1,ats_pick:"Texas -11.5",ats_conf_num:65.4,ats_kelly_num:6.8,ats_edge:"YES"},
+  {date:"2026-09-12",matchup:"Virginia @ Notre Dame",spread_line:-18.5,pred_margin:21.5,ats_pick:"Notre Dame -18.5",ats_conf_num:76.8,ats_kelly_num:12.9,ats_edge:"YES"},
+  {date:"2026-09-12",matchup:"Nebraska @ Indiana",spread_line:-4.5,pred_margin:14.7,ats_pick:"Indiana -4.5",ats_conf_num:78.2,ats_kelly_num:13.5,ats_edge:"YES"},
+  {date:"2026-09-12",matchup:"Kansas State @ SMU",spread_line:-3.5,pred_margin:2.7,ats_pick:"SMU -3.5",ats_conf_num:57.0,ats_kelly_num:2.5,ats_edge:"YES"},
+  {date:"2026-09-19",matchup:"Auburn @ Georgia",spread_line:-8.5,pred_margin:8.3,ats_pick:"Georgia -8.5",ats_conf_num:70.5,ats_kelly_num:9.5,ats_edge:"YES"},
+  {date:"2026-09-19",matchup:"Northwestern @ Ohio State",spread_line:-20.5,pred_margin:28.3,ats_pick:"Ohio State -20.5",ats_conf_num:88.2,ats_kelly_num:18.9,ats_edge:"YES"},
+  {date:"2026-09-19",matchup:"Georgia Tech @ Alabama",spread_line:-18.5,pred_margin:14.6,ats_pick:"Alabama -18.5",ats_conf_num:64.9,ats_kelly_num:6.6,ats_edge:"YES"},
+  {date:"2026-09-19",matchup:"Michigan @ Oregon",spread_line:-4.5,pred_margin:14.7,ats_pick:"Oregon -4.5",ats_conf_num:79.5,ats_kelly_num:14.4,ats_edge:"YES"},
+  {date:"2026-09-19",matchup:"Miami @ Notre Dame",spread_line:-4.5,pred_margin:2.1,ats_pick:"Notre Dame -4.5",ats_conf_num:51.6,ats_kelly_num:0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Texas A&M @ Tennessee",spread_line:1.5,pred_margin:4.6,ats_pick:"Tennessee +1.5",ats_conf_num:72.6,ats_kelly_num:10.6,ats_edge:"YES"},
+  {date:"2026-09-19",matchup:"Florida @ LSU",spread_line:-3.5,pred_margin:1.9,ats_pick:"LSU -3.5",ats_conf_num:53.8,ats_kelly_num:0.7,ats_edge:""},
+  {date:"2026-09-19",matchup:"Oklahoma @ Texas",spread_line:-2.5,pred_margin:6.6,ats_pick:"Texas -2.5",ats_conf_num:81.6,ats_kelly_num:15.4,ats_edge:"YES"},
+  {date:"2026-09-26",matchup:"Tennessee @ Georgia",spread_line:-5.5,pred_margin:0.4,ats_pick:"Tennessee +5.5",ats_conf_num:51.0,ats_kelly_num:0,ats_edge:""},
+  {date:"2026-09-26",matchup:"Penn State @ Ohio State",spread_line:-5.5,pred_margin:6.1,ats_pick:"Ohio State -5.5",ats_conf_num:59.5,ats_kelly_num:3.7,ats_edge:"YES"},
+  {date:"2026-09-26",matchup:"Arkansas @ Alabama",spread_line:-14.5,pred_margin:10.2,ats_pick:"Alabama -14.5",ats_conf_num:53.7,ats_kelly_num:0.7,ats_edge:""},
+  {date:"2026-09-26",matchup:"Wisconsin @ Oregon",spread_line:-11.5,pred_margin:14.7,ats_pick:"Oregon -11.5",ats_conf_num:79.5,ats_kelly_num:14.4,ats_edge:"YES"},
+  {date:"2026-09-26",matchup:"Florida State @ Notre Dame",spread_line:-6.5,pred_margin:21.7,ats_pick:"Notre Dame -6.5",ats_conf_num:90.9,ats_kelly_num:20.3,ats_edge:"YES"},
+  {date:"2026-09-26",matchup:"Florida @ Miami",spread_line:-3.5,pred_margin:6.5,ats_pick:"Miami -3.5",ats_conf_num:67.2,ats_kelly_num:7.7,ats_edge:"YES"},
+  {date:"2026-10-03",matchup:"Missouri @ Georgia",spread_line:-9.5,pred_margin:9.4,ats_pick:"Georgia -9.5",ats_conf_num:57.9,ats_kelly_num:2.9,ats_edge:"YES"},
+  {date:"2026-10-03",matchup:"Nebraska @ Ohio State",spread_line:-15.5,pred_margin:19.5,ats_pick:"Ohio State -15.5",ats_conf_num:76.7,ats_kelly_num:12.8,ats_edge:"YES"},
+  {date:"2026-10-03",matchup:"Kentucky @ Alabama",spread_line:-13.5,pred_margin:11.5,ats_pick:"Alabama -13.5",ats_conf_num:68.9,ats_kelly_num:8.5,ats_edge:"YES"},
+  {date:"2026-10-03",matchup:"Oklahoma State @ Texas",spread_line:-11.5,pred_margin:11.1,ats_pick:"Texas -11.5",ats_conf_num:84.8,ats_kelly_num:17.0,ats_edge:"YES"},
+];
+
+// ════════════════════════════
+// MODAL STORE
+// ════════════════════════════
+const MODAL_DATA = {};
+
+// ════════════════════════════
+// STATE
+// ════════════════════════════
+let state = {
+  sport: 'nfl',
+  nfl:   { week:'all', edgeOnly:false, sortKey:'ats_conf_num', sortDir:-1 },
+  ncaaf: { week:'all', edgeOnly:false, sortKey:'ats_conf_num', sortDir:-1 },
+};
+
+// ════════════════════════════
+// SPORT TAB SWITCH
+// ════════════════════════════
+document.querySelectorAll('.sport-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    state.sport = tab.dataset.sport;
+    document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.sport-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + state.sport).classList.add('active');
+    if (state.sport === 'tracker') {
+      // re-render in case bets changed in another session
+      if (typeof window.renderTracker === 'function') window.renderTracker();
+    }
+  });
+});
+
+// ════════════════════════════
+// HELPERS
+// ════════════════════════════
+function confColor(pct) {
+  if (pct >= 85) return '#22c55e';
+  if (pct >= 75) return '#86efac';
+  if (pct >= 65) return '#f59e0b';
+  return '#7a7f95';
+}
+function getWeekLabel(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const day = d.getDay();
+  const offset = day >= 4 ? day - 4 : day + 3;
+  const thu = new Date(d); thu.setDate(d.getDate() - offset);
+  return thu.toISOString().slice(0,10);
+}
+function groupByWeek(data) {
+  const groups = {};
+  data.forEach(r => {
+    const wk = getWeekLabel(r.date);
+    if (!groups[wk]) groups[wk] = [];
+    groups[wk].push(r.date);
+  });
+  return groups;
+}
+
+// ════════════════════════════
+// BUILD WEEK TABS
+// ════════════════════════════
+function buildWeekTabs(data, containerId, sport) {
+  const groups = groupByWeek(data);
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  const all = document.createElement('div');
+  all.className = 'week-tab active';
+  all.textContent = `All (${data.length})`;
+  all.dataset.week = 'all';
+  all.onclick = () => setWeek(sport, 'all');
+  el.appendChild(all);
+  Object.entries(groups).sort().forEach(([wk, dates]) => {
+    const t = document.createElement('div');
+    t.className = 'week-tab';
+    const label = new Date(wk + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const cnt = data.filter(r => dates.includes(r.date)).length;
+    t.textContent = `Wk ${label} (${cnt})`;
+    t.dataset.week = wk;
+    t.onclick = () => setWeek(sport, wk);
+    el.appendChild(t);
+  });
+}
+function setWeek(sport, wk) {
+  state[sport].week = wk;
+  const containerId = sport + '-week-tabs';
+  document.querySelectorAll('#'+containerId+' .week-tab').forEach(t => t.classList.toggle('active', t.dataset.week === wk));
+  renderTable(sport);
+}
+
+// ════════════════════════════
+// TOP PICKS
+// ════════════════════════════
+function buildTopPicks(data, containerId, sport) {
+  const top = [...data].sort((a,b) => b.ats_conf_num - a.ats_conf_num).slice(0,6);
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  top.forEach(r => {
+    const _k = r.date + '|' + r.matchup;
+    MODAL_DATA[_k] = {...r, _sport: sport};
+    el.innerHTML += `
+      <div class="pick-card ${sport}" onclick="openModal(this.dataset.mkey)" data-mkey="${_k.replace(/"/g,'&quot;')}">
+        <div class="matchup">${r.date} · ${r.matchup}</div>
+        <div class="pick">${r.ats_pick}</div>
+        <div class="conf-row">
+          <div class="conf-bar-bg"><div class="conf-bar-fill" style="width:${r.ats_conf_num}%;background:${confColor(r.ats_conf_num)}"></div></div>
+          <div class="conf-pct" style="color:${confColor(r.ats_conf_num)}">${r.ats_conf_num.toFixed(1)}%</div>
+        </div>
+        <div class="pick-meta">
+          <span>Spread: <b>${r.spread_line > 0 ? '+' : ''}${r.spread_line}</b></span>
+          <span class="kelly">Kelly: ${r.ats_kelly_num > 0 ? r.ats_kelly_num.toFixed(1)+'% · '+(r.ats_kelly_num/5).toFixed(1)+'u' : '—'}</span>
+          ${r.tot_pick ? `<span style="color:${r.tot_pick.startsWith('UNDER') ? 'var(--red)' : 'var(--blue)'};">${r.tot_pick}</span>` : (r.pred_margin !== undefined ? `<span style="color:var(--muted)">Pred: ${r.pred_margin > 0 ? '+' : ''}${r.pred_margin}</span>` : '')}
+        </div>
+      </div>`;
+  });
+}
+
+// ════════════════════════════
+// RENDER TABLE
+// ════════════════════════════
+function renderTable(sport) {
+  const s = state[sport];
+  const src = sport === 'nfl' ? NFL : NCAAF;
+  const groups = groupByWeek(src);
+  let data = [...src];
+  if (s.week !== 'all') {
+    const dates = groups[s.week] || [];
+    data = data.filter(r => dates.includes(r.date));
+  }
+  if (s.edgeOnly) data = data.filter(r => r.ats_edge === 'YES');
+  data.sort((a,b) => {
+    let av = a[s.sortKey] ?? '', bv = b[s.sortKey] ?? '';
+    if (typeof av === 'string') av = av.toLowerCase();
+    if (typeof bv === 'string') bv = bv.toLowerCase();
+    return av < bv ? -s.sortDir : av > bv ? s.sortDir : 0;
+  });
+
+  const tbody = document.getElementById(sport + '-tbody');
+  tbody.innerHTML = '';
+  data.forEach(r => {
+    const tr = document.createElement('tr');
+    if (r.ats_edge === 'YES') tr.classList.add('edge-row');
+    const _rk = r.date + '|' + r.matchup;
+    MODAL_DATA[_rk] = {...r, _sport: sport};
+    tr.onclick = () => openModal(_rk);
+    const sl = `${r.spread_line > 0 ? '+' : ''}${r.spread_line}`;
+    let extraCell = '';
+    if (sport === 'nfl') {
+      const isUnder = r.tot_pick && r.tot_pick.startsWith('UNDER');
+      const moveVal = r.line_move || 0;
+      const moveCls = moveVal > 0 ? 'move-up' : moveVal < 0 ? 'move-dn' : 'move-flat';
+      const moveStr = r.move_label || '—';
+      const injStr  = r.injury_flag ? `<span class="inj-flag">${r.injury_flag}</span>` : '<span class="no-edge">—</span>';
+      extraCell = `
+        <td style="text-align:center"><span class="${moveCls}">${moveStr}</span>${r.open_spread !== undefined && r.open_spread !== r.spread_line ? `<div style="font-size:10px;color:var(--muted)">was ${r.open_spread > 0 ? '+' : ''}${r.open_spread}</div>` : ''}</td>
+        <td style="font-size:12px;color:${isUnder ? 'var(--red)' : 'var(--blue)'}">${r.tot_pick||'—'} <span style="color:var(--muted);font-size:11px">${r.tot_conf||''}</span></td>
+        <td>${injStr}</td>`;
+    } else {
+      const pm = r.pred_margin;
+      const pmColor = pm > 0 ? 'var(--green)' : 'var(--red)';
+      extraCell = `<td class="pred" style="color:${pmColor}">${pm > 0 ? '+' : ''}${pm}</td>`;
+    }
+    tr.innerHTML = `
+      <td><div class="td-date">${r.date}</div><div style="font-size:10px;color:var(--muted)">${r.time||''}</div></td>
+      <td class="td-matchup">${r.matchup}</td>
+      <td class="td-spread">${sl}</td>
+      <td style="font-size:12px;font-weight:600">${r.ats_pick}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${r.ats_conf_num}%;background:${confColor(r.ats_conf_num)}"></div></div>
+          <span class="conf-num" style="color:${confColor(r.ats_conf_num)}">${r.ats_conf_num.toFixed(1)}%</span>
+        </div>
+      </td>
+      <td style="text-align:center">${r.ats_edge === 'YES' ? '<span class="edge-badge">EDGE</span>' : '<span class="no-edge">—</span>'}</td>
+      <td class="td-kelly">${r.ats_kelly_num > 0 ? r.ats_kelly_num.toFixed(1)+'%' : '—'}</td>
+      <td style="text-align:center;font-size:12px;font-weight:700;color:var(--gold)">${r.ats_kelly_num > 0 ? (r.ats_kelly_num/5).toFixed(1)+'u' : '—'}</td>
+      ${extraCell}`;
+    tbody.appendChild(tr);
+  });
+
+  const edgeCnt = data.filter(r => r.ats_edge === 'YES').length;
+  const avgC = data.length ? (data.reduce((s,r) => s + r.ats_conf_num, 0) / data.length).toFixed(1) : 0;
+  document.getElementById(sport+'-show').textContent = data.length;
+  document.getElementById(sport+'-total').textContent = src.length;
+  document.getElementById(sport+'-edge-stat').textContent = `${edgeCnt} / ${data.length}`;
+  document.getElementById(sport+'-avg-conf').textContent = `${avgC}%`;
+}
+
+function sortNFL(key) {
+  const s = state.nfl;
+  s.sortDir = s.sortKey === key ? s.sortDir * -1 : -1;
+  s.sortKey = key;
+  renderTable('nfl');
+}
+function sortNCAA(key) {
+  const s = state.ncaaf;
+  s.sortDir = s.sortKey === key ? s.sortDir * -1 : -1;
+  s.sortKey = key;
+  renderTable('ncaaf');
+}
+
+// ════════════════════════════
+// INIT
+// ════════════════════════════
+buildWeekTabs(NFL,   'nfl-week-tabs',   'nfl');
+buildWeekTabs(NCAAF, 'ncaaf-week-tabs', 'ncaaf');
+buildTopPicks(NFL,   'nfl-top-picks',   'nfl');
+buildTopPicks(NCAAF, 'ncaaf-top-picks', 'ncaaf');
+renderTable('nfl');
+renderTable('ncaaf');
+
+const nflEdge   = NFL.filter(r => r.ats_edge === 'YES').length;
+const ncaafEdge = NCAAF.filter(r => r.ats_edge === 'YES').length;
+document.getElementById('nfl-edge-sub').textContent   = `${nflEdge} edge picks (>54% conf)`;
+document.getElementById('ncaaf-edge-sub').textContent = `${ncaafEdge} edge picks (>54% conf)`;
+
+document.getElementById('nfl-edge-only').addEventListener('change', e => {
+  state.nfl.edgeOnly = e.target.checked;
+  renderTable('nfl');
+});
+document.getElementById('ncaaf-edge-only').addEventListener('change', e => {
+  state.ncaaf.edgeOnly = e.target.checked;
+  renderTable('ncaaf');
+});
+
+// ════════════════════════════
+// MODAL
+// ════════════════════════════
+function openModal(key) {
+  const r = MODAL_DATA[key];
+  if (!r) return;
+  const sport = r._sport;
+  const conf  = r.ats_conf_num;
+  const kelly = r.ats_kelly_num;
+  const edge  = r.ats_edge === 'YES';
+
+  const tag = document.getElementById('m-sport-tag');
+  tag.textContent = sport.toUpperCase();
+  tag.className = 'm-sport-tag ' + sport;
+
+  document.getElementById('m-matchup-label').textContent = r.date + ' · ' + r.matchup;
+  document.getElementById('m-pick-label').innerHTML =
+    r.ats_pick +
+    ' <span style="color:var(--muted);font-size:13px;font-weight:400">· Spread: ' +
+    (r.spread_line > 0 ? '+' : '') + r.spread_line + '</span>';
+
+  const fill = document.getElementById('m-conf-fill');
+  fill.style.width  = conf + '%';
+  fill.style.background = confColor(conf);
+
+  const chips = [
+    `<span class="m-meta-chip" style="color:${confColor(conf)}">${conf.toFixed(1)}% conf</span>`,
+    `<span class="m-meta-chip" style="color:var(--gold)">${kelly > 0 ? kelly.toFixed(1) + '% Kelly · ' + (kelly/5).toFixed(1) + 'u' : '0u'}</span>`,
+    edge
+      ? '<span class="m-meta-chip" style="color:var(--green)">EDGE</span>'
+      : '<span class="m-meta-chip" style="color:var(--muted)">No edge</span>',
+  ];
+  if (sport === 'nfl' && r.tot_pick) {
+    const tCol = r.tot_pick.startsWith('UNDER') ? 'var(--red)' : 'var(--blue)';
+    chips.push(`<span class="m-meta-chip" style="color:${tCol}">${r.tot_pick} ${r.tot_conf || ''}</span>`);
+  }
+  if (sport === 'ncaaf' && r.pred_margin !== undefined) {
+    const pm = r.pred_margin;
+    chips.push(`<span class="m-meta-chip" style="color:var(--muted)">Pred margin: ${pm > 0 ? '+' : ''}${pm}</span>`);
+  }
+  document.getElementById('m-meta').innerHTML = chips.join('');
+
+  const { forItems, againstItems, verdict, verdictColor } = generateBreakdown(r, sport);
+  document.getElementById('m-for').innerHTML     = forItems.map(s    => `<div class="modal-item">${s}</div>`).join('');
+  document.getElementById('m-against').innerHTML = againstItems.map(s => `<div class="modal-item">${s}</div>`).join('');
+  document.getElementById('m-verdict').textContent = verdict;
+  document.getElementById('m-verdict').style.color  = verdictColor;
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function generateBreakdown(r, sport) {
+  const forItems     = [];
+  const againstItems = [];
+  const conf    = r.ats_conf_num;
+  const kelly   = r.ats_kelly_num;
+  const edge    = r.ats_edge === 'YES';
+  const spread  = r.spread_line;
+  const isDog   = r.ats_pick && /\+[\d.]+$/.test(r.ats_pick);
+  const lineMove = r.line_move || 0;
+  const injFlag  = r.injury_flag || '';
+
+  if (conf >= 88)
+    forItems.push(`🎯 <b>Very high confidence at ${conf.toFixed(1)}%</b> — top-decile signal across ${sport === 'nfl' ? '7K+' : '58K+'} training games`);
+  else if (conf >= 80)
+    forItems.push(`📊 <b>Strong confidence at ${conf.toFixed(1)}%</b> — well above the 54% breakeven threshold`);
+  else if (conf >= 70)
+    forItems.push(`📈 <b>Solid edge at ${conf.toFixed(1)}%</b> — clear pattern in the data`);
+  else if (conf >= 57)
+    forItems.push(`📉 Model shows a <b>lean at ${conf.toFixed(1)}%</b> — modest but real edge`);
+  else
+    againstItems.push(`⚠️ Confidence is only <b>${conf.toFixed(1)}%</b> — very thin margin near the 54% threshold`);
+
+  if (kelly >= 18)
+    forItems.push(`💰 <b>High Kelly sizing: ${kelly.toFixed(1)}% (${(kelly/5).toFixed(1)}u)</b> — model finds substantial mispricing`);
+  else if (kelly >= 10)
+    forItems.push(`💰 Solid Kelly bet: <b>${kelly.toFixed(1)}% (${(kelly/5).toFixed(1)}u)</b>`);
+  else if (kelly >= 3)
+    againstItems.push(`💰 Low Kelly: <b>${kelly.toFixed(1)}% (${(kelly/5).toFixed(1)}u)</b> — consider half-unit`);
+  else if (kelly > 0)
+    againstItems.push(`⚠️ Very low Kelly: <b>${kelly.toFixed(1)}%</b> — borderline, consider skipping`);
+  else
+    againstItems.push(`❌ Kelly criterion suggests <b>0 units</b> — no bet recommended`);
+
+  if (isDog) {
+    const pts = Math.abs(spread);
+    forItems.push(`🐶 Getting <b>+${pts} points</b> as the underdog — dogs cover ~52–53% ATS historically`);
+  } else {
+    const pts = Math.abs(spread);
+    if (pts >= 10)
+      againstItems.push(`🚩 Laying <b>${pts}+ points</b> — heavy favorites cover ATS at only ~45% historically`);
+    else if (pts >= 7)
+      againstItems.push(`📋 Laying <b>${pts} points</b> — large favorites have a known ATS fade bias`);
+  }
+
+  if (lineMove < -0.5)
+    forItems.push(`📉 Line moved <b>${Math.abs(lineMove)} pts in your favor</b> since open — sharp money signal`);
+  else if (lineMove > 0.5)
+    againstItems.push(`📈 Line moved <b>${lineMove} pts against you</b> since open — sharp action on the other side`);
+
+  if (injFlag) {
+    if (injFlag.includes('QB'))
+      againstItems.push(`🏥 <b>QB injury flag</b>: ${injFlag} — highest-impact injury factor`);
+    else
+      againstItems.push(`🏥 Injury concern: ${injFlag}`);
+  }
+
+  if (sport === 'nfl' && r.tot_pick && r.tot_conf) {
+    const totNum = parseFloat(r.tot_conf);
+    if (totNum >= 60)
+      forItems.push(`📊 Totals also showing strong edge: <b>${r.tot_pick}</b> at <b>${r.tot_conf}</b>`);
+    else if (totNum >= 55)
+      forItems.push(`📊 Totals pick: <b>${r.tot_pick}</b> (${r.tot_conf})`);
+  }
+
+  if (sport === 'ncaaf' && r.pred_margin !== undefined) {
+    const pm = r.pred_margin;
+    const absSpread = Math.abs(spread);
+    if (isDog) {
+      if (Math.abs(pm) < absSpread - 4)
+        forItems.push(`📐 SP+ projects a <b>${pm > 0 ? '+' : ''}${pm} margin</b> — ${(absSpread - Math.abs(pm)).toFixed(1)} pts of cushion`);
+      else if (Math.abs(pm) < absSpread)
+        forItems.push(`📐 SP+ margin <b>${pm > 0 ? '+' : ''}${pm}</b> — inside the spread but tight`);
+      else
+        againstItems.push(`📐 SP+ projects <b>${pm > 0 ? '+' : ''}${pm}</b> — model says the favorite may cover`);
+    } else {
+      if (Math.abs(pm) > absSpread + 5)
+        forItems.push(`📐 SP+ projects <b>${pm > 0 ? '+' : ''}${pm} margin</b> — covers with ${(Math.abs(pm) - absSpread).toFixed(1)} pts to spare`);
+      else if (Math.abs(pm) >= absSpread)
+        forItems.push(`📐 SP+ projects <b>${pm > 0 ? '+' : ''}${pm}</b> — just clears the ${absSpread} spread`);
+      else
+        againstItems.push(`📐 SP+ margin (<b>${pm > 0 ? '+' : ''}${pm}</b>) doesn't fully cover the ${absSpread} spread`);
+    }
+  }
+
+  if (!edge)
+    againstItems.push(`📋 Not flagged as an edge pick — confidence or Kelly below model threshold`);
+  if (forItems.length === 0)
+    forItems.push(`📋 Marginal model signals — no strong bullish factors detected`);
+  if (againstItems.length === 0)
+    againstItems.push(`✓ No major red flags — signals are clean for this pick`);
+
+  let verdict, verdictColor;
+  if      (conf >= 82 && edge && kelly >= 12) { verdict = '🔥 Strong Play';  verdictColor = '#22c55e'; }
+  else if (conf >= 70 && edge && kelly >= 6)  { verdict = '✅ Good Play';     verdictColor = '#86efac'; }
+  else if (conf >= 57 && edge)                { verdict = '📊 Lean';          verdictColor = '#f59e0b'; }
+  else                                         { verdict = '⏭️ Pass';          verdictColor = '#7a7f95'; }
+
+  return { forItems, againstItems, verdict, verdictColor };
+}
+
+// ════════════════════════════
+// BET TRACKER
+// ════════════════════════════
+(function() {
+  const LS_BK   = 'nfl_bk_start';
+  const LS_BETS = 'nfl_bets';
+
+  function loadBets() {
+    try { return JSON.parse(localStorage.getItem(LS_BETS)) || []; } catch(e) { return []; }
+  }
+  function saveBets(bets) { localStorage.setItem(LS_BETS, JSON.stringify(bets)); }
+  function loadStart() {
+    const v = parseFloat(localStorage.getItem(LS_BK));
+    return isNaN(v) ? 1000 : v;
+  }
+
+  function calcToWin(bet, odds) {
+    const o = parseFloat(odds);
+    if (isNaN(o) || bet <= 0) return 0;
+    if (o > 0)  return +(bet * o / 100).toFixed(2);
+    if (o < 0)  return +(bet * 100 / Math.abs(o)).toFixed(2);
+    return 0;
+  }
+  function calcProfit(bet, odds, result) {
+    if (result === 'win')  return +calcToWin(bet, odds).toFixed(2);
+    if (result === 'loss') return +(-bet).toFixed(2);
+    return 0;
+  }
+  function fmt$(n) {
+    const abs = Math.abs(n).toFixed(2);
+    const parts = abs.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (n < 0 ? '-' : '') + '$' + parts.join('.');
+  }
+
+  window.saveBankroll = function() {
+    const v = parseFloat(document.getElementById('bk-start-input').value);
+    if (!isNaN(v) && v >= 0) localStorage.setItem(LS_BK, v);
+    window.renderTracker();
+  };
+
+  window.addBet = function() {
+    const matchup = document.getElementById('bf-matchup').value.trim();
+    const pick    = document.getElementById('bf-pick').value.trim();
+    const odds    = document.getElementById('bf-odds').value.trim() || '-110';
+    const amount  = parseFloat(document.getElementById('bf-amount').value);
+    const date    = document.getElementById('bf-date').value || new Date().toISOString().slice(0,10);
+    if (!matchup || !pick || isNaN(amount) || amount <= 0) {
+      alert('Fill in Matchup, Pick, and a valid Bet Amount.');
+      return;
+    }
+    const bets = loadBets();
+    bets.unshift({ id: Date.now(), date, matchup, pick, odds, amount: +amount.toFixed(2), result: 'pending' });
+    saveBets(bets);
+    document.getElementById('bf-matchup').value = '';
+    document.getElementById('bf-pick').value    = '';
+    document.getElementById('bf-odds').value    = '-110';
+    document.getElementById('bf-amount').value  = '';
+    document.getElementById('bf-quickfill').value = '';
+    window.renderTracker();
+  };
+
+  window.setBetResult = function(id, result) {
+    const bets = loadBets();
+    const bet  = bets.find(b => b.id === id);
+    if (bet) bet.result = (bet.result === result) ? 'pending' : result;
+    saveBets(bets);
+    window.renderTracker();
+  };
+
+  window.deleteBet = function(id) {
+    if (!confirm('Delete this bet?')) return;
+    saveBets(loadBets().filter(b => b.id !== id));
+    window.renderTracker();
+  };
+
+  window.clearAllBets = function() {
+    if (!confirm('Clear all bets? This cannot be undone.')) return;
+    saveBets([]);
+    window.renderTracker();
+  };
+
+  window.quickFill = function(val) {
+    if (!val) return;
+    const [matchup, pick] = val.split('||');
+    document.getElementById('bf-matchup').value = matchup || '';
+    document.getElementById('bf-pick').value    = pick    || '';
+  };
+
+  function buildQuickFill() {
+    const sel  = document.getElementById('bf-quickfill');
+    const list = document.getElementById('matchup-list');
+    sel.innerHTML  = '<option value="">— Select a model pick —</option>';
+    list.innerHTML = '';
+    [...NFL, ...NCAAF].forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.matchup + '||' + r.ats_pick;
+      opt.textContent = '[' + r.date + '] ' + r.matchup + ' → ' + r.ats_pick;
+      sel.appendChild(opt);
+      const dl = document.createElement('option');
+      dl.value = r.matchup;
+      list.appendChild(dl);
+    });
+  }
+
+  let unitChart = null;
+
+  function renderUnitChart(bets) {
+    const settled = [...bets]
+      .filter(b => b.result !== 'pending')
+      .sort((a, b) => a.id - b.id);
+
+    const canvas = document.getElementById('unit-chart');
+    const empty  = document.getElementById('unit-chart-empty');
+
+    if (settled.length === 0) {
+      empty.style.display  = 'block';
+      canvas.style.display = 'none';
+      if (unitChart) { unitChart.destroy(); unitChart = null; }
+      return;
+    }
+
+    empty.style.display  = 'none';
+    canvas.style.display = 'block';
+
+    const UNITS  = [10, 20, 50];
+    const series = UNITS.map(() => [0]);
+    const labels = ['Start'];
+
+    settled.forEach(function(b, i) {
+      const odds = parseFloat(b.odds) || -110;
+      UNITS.forEach(function(u, ui) {
+        const prev = series[ui][series[ui].length - 1];
+        var profit = 0;
+        if (b.result === 'win') {
+          profit = odds > 0 ? +(u * odds / 100).toFixed(2) : +(u * 100 / Math.abs(odds)).toFixed(2);
+        } else if (b.result === 'loss') {
+          profit = -u;
+        }
+        series[ui].push(+(prev + profit).toFixed(2));
+      });
+      var lbl = 'Bet ' + (i + 1);
+      if (b.date) lbl += ' · ' + b.date.slice(5);
+      labels.push(lbl);
+    });
+
+    var datasets = [
+      { label: '$10 / unit', data: series[0], borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.08)', tension: 0.3, pointRadius: settled.length > 20 ? 2 : 4, borderWidth: 2, fill: false },
+      { label: '$20 / unit', data: series[1], borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.08)', tension: 0.3, pointRadius: settled.length > 20 ? 2 : 4, borderWidth: 2, fill: false },
+      { label: '$50 / unit', data: series[2], borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.08)', tension: 0.3, pointRadius: settled.length > 20 ? 2 : 4, borderWidth: 2, fill: false }
+    ];
+
+    if (unitChart) {
+      unitChart.data.labels   = labels;
+      unitChart.data.datasets = datasets;
+      unitChart.update('none');
+      return;
+    }
+
+    unitChart = new Chart(canvas, {
+      type: 'line',
+      data: { labels: labels, datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1a1d27',
+            borderColor: '#2a2d3a',
+            borderWidth: 1,
+            titleColor: '#7a7f95',
+            bodyColor: '#e8eaf0',
+            callbacks: {
+              label: function(ctx) {
+                var v = ctx.parsed.y;
+                return ' ' + ctx.dataset.label + ': ' + (v >= 0 ? '+' : '') + '$' + Math.abs(v).toFixed(2);
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#7a7f95', font: { size: 10 }, maxRotation: 0, maxTicksLimit: 10 },
+            grid:  { color: 'rgba(42,45,58,0.8)' }
+          },
+          y: {
+            ticks: {
+              color: '#7a7f95',
+              font:  { size: 10 },
+              callback: function(v) { return (v >= 0 ? '+' : '') + '$' + v.toFixed(0); }
+            },
+            grid:   { color: 'rgba(42,45,58,0.8)' },
+            border: { dash: [4, 4] }
+          }
+        }
+      }
+    });
+  }
+
+  window.renderTracker = function() {
+    var start = loadStart();
+    var bets  = loadBets();
+    document.getElementById('bk-start-input').value = start;
+
+    renderUnitChart(bets);
+
+    var settled  = bets.filter(function(b) { return b.result !== 'pending'; });
+    var wins     = settled.filter(function(b) { return b.result === 'win'; }).length;
+    var losses   = settled.filter(function(b) { return b.result === 'loss'; }).length;
+    var pushes   = settled.filter(function(b) { return b.result === 'push'; }).length;
+    var totalPnl = settled.reduce(function(s, b) { return s + calcProfit(b.amount, b.odds, b.result); }, 0);
+    var currentBk    = start + totalPnl;
+    var settledAction = settled.reduce(function(s,b) { return s + b.amount; }, 0);
+    var roi      = settledAction > 0 ? (totalPnl / settledAction * 100) : 0;
+    var winRate  = (wins + losses) > 0 ? wins / (wins + losses) * 100 : null;
+    var totalAction = bets.reduce(function(s,b) { return s + b.amount; }, 0);
+
+    var bkEl = document.getElementById('bk-current');
+    bkEl.textContent = fmt$(currentBk);
+    bkEl.style.color = currentBk >= start ? 'var(--green)' : 'var(--red)';
+
+    var pnlEl = document.getElementById('bk-pnl');
+    pnlEl.textContent = (totalPnl >= 0 ? '+' : '') + fmt$(totalPnl);
+    pnlEl.style.color = totalPnl >= 0 ? 'var(--green)' : 'var(--red)';
+
+    document.getElementById('bk-roi-sub').textContent  = 'ROI: ' + (roi >= 0 ? '+' : '') + roi.toFixed(1) + '%';
+    document.getElementById('bk-record').textContent   = wins + '-' + losses + '-' + pushes;
+    document.getElementById('bk-winrate').textContent  = winRate !== null ? winRate.toFixed(1) + '%' : '—';
+    document.getElementById('bk-units').textContent    = (start > 0 ? (totalAction / (start / 100)).toFixed(1) : '0') + 'u';
+
+    var tbody = document.getElementById('bh-tbody');
+    if (bets.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10" class="bh-empty">No bets yet — add your first bet above</td></tr>';
+      return;
+    }
+
+    var runBk = start;
+    var processed = [...bets].reverse().map(function(b) {
+      var profit = calcProfit(b.amount, b.odds, b.result);
+      if (b.result !== 'pending') runBk += profit;
+      return Object.assign({}, b, { profit: profit, runningBk: runBk });
+    }).reverse();
+
+    tbody.innerHTML = '';
+    processed.forEach(function(b) {
+      var toWin = calcToWin(b.amount, b.odds);
+      var pnlStr = b.result === 'pending'
+        ? '<span class="pnl-zero">—</span>'
+        : '<span class="' + (b.profit >= 0 ? 'pnl-pos' : 'pnl-neg') + '">' + (b.profit >= 0 ? '+' : '') + fmt$(b.profit) + '</span>';
+      var bkDisp = b.result !== 'pending' ? fmt$(b.runningBk) : '<span style="color:var(--muted)">—</span>';
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td style="color:var(--muted);font-size:11px">' + b.date + '</td>' +
+        '<td style="max-width:180px;white-space:normal;font-size:12px">' + b.matchup + '</td>' +
+        '<td style="font-weight:600;font-size:12px">' + b.pick + '</td>' +
+        '<td style="text-align:center;color:var(--muted)">' + b.odds + '</td>' +
+        '<td style="text-align:right">' + fmt$(b.amount) + '</td>' +
+        '<td style="text-align:right;color:var(--gold)">' + fmt$(toWin) + '</td>' +
+        '<td style="text-align:center"><div class="res-btns" style="justify-content:center">' +
+          '<button class="res-btn win ' + (b.result==='win'?'active':'') + '" onclick="setBetResult(' + b.id + ',\'win\')">W</button>' +
+          '<button class="res-btn loss ' + (b.result==='loss'?'active':'') + '" onclick="setBetResult(' + b.id + ',\'loss\')">L</button>' +
+          '<button class="res-btn push ' + (b.result==='push'?'active':'') + '" onclick="setBetResult(' + b.id + ',\'push\')">P</button>' +
+        '</div></td>' +
+        '<td style="text-align:right">' + pnlStr + '</td>' +
+        '<td style="text-align:right;font-size:12px">' + bkDisp + '</td>' +
+        '<td><button class="del-btn" onclick="deleteBet(' + b.id + ')" title="Delete">&#x2715;</button></td>';
+      tbody.appendChild(tr);
+    });
+  };
+
+  // Init
+  document.getElementById('bf-date').value = new Date().toISOString().slice(0,10);
+  buildQuickFill();
+  window.renderTracker();
+})();
+</script>
+</body>
+</html>
