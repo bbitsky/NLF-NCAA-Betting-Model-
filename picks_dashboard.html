@@ -1432,4 +1432,46 @@ function generateBreakdown(r, sport) {
     document.getElementById('bk-units').textContent    = (start > 0 ? (totalAction / (start / 100)).toFixed(1) : '0') + 'u';
 
     var tbody = document.getElementById('bh-tbody');
-    if (bets.length
+    if (bets.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10" class="bh-empty">No bets yet — add your first bet above</td></tr>';
+    } else {
+      var ordered = bets.slice().reverse();
+      var runBk = start;
+      var rows = ordered.map(function(b) {
+        var toWin  = calcToWin(b.amount, b.odds);
+        var profit = calcProfit(b.amount, b.odds, b.result);
+        if (b.result !== 'pending') runBk += profit;
+        var pnlStyle = profit > 0 ? 'color:var(--green)' : profit < 0 ? 'color:var(--red)' : 'color:var(--muted)';
+        var bkStyle  = runBk >= start ? 'color:var(--green)' : 'color:var(--red)';
+        var btnBase  = 'background:none;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:10px;font-weight:700;padding:2px 6px;cursor:pointer;margin:0 1px';
+        var wStyle   = b.result === 'win'  ? btnBase+';background:var(--green);color:#000;border-color:var(--green)' : btnBase;
+        var lStyle   = b.result === 'loss' ? btnBase+';background:var(--red);color:#fff;border-color:var(--red)'     : btnBase;
+        var pStyle   = b.result === 'push' ? btnBase+';background:var(--gold);color:#000;border-color:var(--gold)'   : btnBase;
+        return '<tr>' +
+          '<td>' + b.date + '</td>' +
+          '<td>' + b.matchup + '</td>' +
+          '<td>' + b.pick + '</td>' +
+          '<td style="text-align:center">' + b.odds + '</td>' +
+          '<td style="text-align:right">' + fmt$(b.amount) + '</td>' +
+          '<td style="text-align:right">' + fmt$(toWin) + '</td>' +
+          '<td style="text-align:center;white-space:nowrap">' +
+            '<button style="' + wStyle + '" onclick="setBetResult(' + b.id + ',\'win\')">W</button>' +
+            '<button style="' + lStyle + '" onclick="setBetResult(' + b.id + ',\'loss\')">L</button>' +
+            '<button style="' + pStyle + '" onclick="setBetResult(' + b.id + ',\'push\')">P</button>' +
+          '</td>' +
+          '<td style="text-align:right;' + pnlStyle + '">' + (b.result !== 'pending' ? (profit >= 0 ? '+' : '') + fmt$(profit) : '—') + '</td>' +
+          '<td style="text-align:right;' + bkStyle + '">' + fmt$(runBk) + '</td>' +
+          '<td><button onclick="deleteBet(' + b.id + ')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 6px" title="Delete">✕</button></td>' +
+          '</tr>';
+      });
+      tbody.innerHTML = rows.reverse().join('');
+    }
+  };
+
+  window.renderTracker();
+  buildQuickFill();
+
+})();
+</script>
+</body>
+</html>
