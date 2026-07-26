@@ -249,14 +249,24 @@ def main():
     result = git("commit", "-m", f"Daily update — {date_str} — intel {report_date}")
     out = result.stdout + result.stderr
     if "nothing to commit" in out:
-        print("No changes since last push — already up to date.")
-        print(f"  Live at: {PAGES_URL}")
-        return
-    print(f"✓ Committed: Daily update — {date_str}")
+        print("No new local changes — will still sync/push any unpushed commits.")
+    else:
+        print(f"✓ Committed: Daily update — {date_str}")
 
-    # 6. Push
-    print("Pushing to GitHub...")
-    push = git("push", "-u", "origin", "main")
+    # 6. Sync with remote first (in case anything was committed on GitHub
+    #    directly, e.g. via the web uploader), then push.
+    print("Syncing with GitHub...")
+    git("fetch", "origin")
+    rebase = git("pull", "--rebase", "origin", "main")
+    if rebase.returncode != 0:
+        # A conflicting commit exists on GitHub (e.g. a same-day web upload).
+        # Local files are the source of truth, so drop the conflict and
+        # force-push our version.
+        print("  ⚠ Remote has a conflicting commit — keeping LOCAL version (source of truth).")
+        git("rebase", "--abort")
+        push = git("push", "--force", "-u", "origin", "main")
+    else:
+        push = git("push", "-u", "origin", "main")
     if push.returncode == 0:
         print(f"\n✅ Dashboard live at: {PAGES_URL}")
         print(f"   Intel tab updated with report from {report_date}")
