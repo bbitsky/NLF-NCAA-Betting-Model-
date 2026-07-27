@@ -101,6 +101,8 @@
 
   /* ── Intel tab color ── */
   .sport-tab.active.intel{color:var(--gold);border-color:var(--gold)}
+  .sport-tab.active.weekly{color:#a78bfa;border-color:#a78bfa}
+  .weekly-wrap h2{color:#a78bfa !important}
 
   /* ── Intel panel ── */
   .intel-wrap{padding:20px 24px;max-width:960px}
@@ -248,21 +250,23 @@
   <div class="sport-tab ncaaf" data-sport="ncaaf">🎓 NCAAF (37 games)</div>
   <div class="sport-tab tracker" data-sport="tracker">💰 Bet Tracker</div>
   <div class="sport-tab intel" data-sport="intel">📰 Daily Intel</div>
+  <div class="sport-tab weekly" data-sport="weekly">📅 Weekly Intel</div>
 </div>
 
 <!-- ═══════════ NFL PANEL ═══════════ -->
 <div class="sport-panel active" id="panel-nfl">
+<div style="background:#3a2b12;border:1px solid #8a6d1a;color:#e8c96a;padding:10px 16px;border-radius:8px;margin:10px 0;font-size:14px;">⚠ <strong>Model rebuilt July 27, 2026</strong> after an audit found the previous accuracy claims (77.5% / 78.1%) were artifacts of data bugs. Numbers now shown are honest walk-forward results (v4: EPA features tested and rejected — the closing line already prices them in; stakes stay disabled until the long-run record clears breakeven) — currently at/below the 52.4% breakeven, so treat picks as informational, not bettable. Picks tables below are from the old (buggy) model until the next in-season refresh.</div>
 
   <div class="stats-bar">
     <div class="stat-card stat-nfl1">
-      <div class="label">NFL ATS Accuracy</div>
-      <div class="value">77.5%</div>
-      <div class="sub">78.6% on edge picks · 816 test games</div>
+      <div class="label">NFL ATS Accuracy (walk-forward)</div>
+      <div class="value">49.9%</div>
+      <div class="sub">Long-run 2018–25 walk-forward (2,174 games) · 2024: 47.7% · 2025: 53.5% · breakeven 52.4%</div>
     </div>
     <div class="stat-card stat-nfl2">
-      <div class="label">NFL Totals Accuracy</div>
-      <div class="value">50.6%</div>
-      <div class="sub">52.4% on edge picks · 816 test games</div>
+      <div class="label">NFL Totals Accuracy (walk-forward)</div>
+      <div class="value">52.0%</div>
+      <div class="sub">2024: 53.2% · 2025: 50.9% · breakeven 52.4%</div>
     </div>
     <div class="stat-card" style="background:var(--card)">
       <div class="label">Brier Score</div>
@@ -318,13 +322,13 @@
 
   <div class="stats-bar">
     <div class="stat-card stat-ncaaf">
-      <div class="label">NCAAF Direction Accuracy</div>
-      <div class="value">78.1%</div>
-      <div class="sub">Correct winner picked · 2023–24 test</div>
+      <div class="label">NCAAF ATS vs Closing Line</div>
+      <div class="value">50.4%</div>
+      <div class="sub">2023: 51.8% · 2024: 48.9% · vs closing book lines</div>
     </div>
     <div class="stat-card" style="background:var(--card)">
       <div class="label">NCAAF Margin MAE</div>
-      <div class="value" style="color:var(--orange)">11.0 pts</div>
+      <div class="value" style="color:var(--orange)">12.9 pts</div>
       <div class="sub">Mean absolute error vs actual margin</div>
     </div>
     <div class="stat-card" style="background:var(--card)">
@@ -510,75 +514,235 @@
 <div class="sport-panel" id="panel-intel">
   <div class="intel-wrap">
     <!-- INTEL_CONTENT_START -->
-<div class="intel-meta">Report date: <strong>2026-07-26</strong> &nbsp;·&nbsp; Updated: 2026-07-26 11:36 UTC</div>
-<h1>NFL + NCAAF Daily Intel — July 26, 2026</h1>
-<p><em>Offseason/training-camp scan. All 32 NFL teams report to camp by July 28; no weekly practice reports or game lines yet, so this report covers camp injuries (PUP/NFI), contract situations, futures/win-total markets, and Week 1 openers.</em></p>
+<div class="intel-meta">Report date: <strong>2026-07-27</strong> &nbsp;·&nbsp; Updated: July 27, 2026 at 08:17 AM</div><h1>NFL + NCAAF Daily Intel — July 27, 2026</h1>
+
+<p><em>Note: This run executed ahead of the regular in-season schedule (camps just opening; season opener Sept 9). Content is training-camp focused. First game on the board: Hall of Fame Game, Aug 6.</em></p>
+
 <h2>🚨 BREAKING / HIGH IMPACT</h2>
 <ul>
-<li><strong>⚠️ Patrick Mahomes (QB, KC) CLEARED for practice</strong> to open training camp, coming off torn ACL + LCL suffered in December. Massive for KC win total (market has been pricing in uncertainty) — watch for KC futures/win-total steam as he stacks full practices.</li>
-<li><strong>⚠️ George Kittle (TE, SF) placed on PUP</strong> (torn Achilles, January). 49ers also open camp without HC Kyle Shanahan, recovering from a concussion suffered in a July car accident. Two negative data points on SF ahead of their Week 1 game vs. the Rams in Melbourne, Australia.</li>
-<li><strong>Christian Gonzalez (CB, NE) contract watch</strong>: Kraft says Patriots offered to make him the highest-paid CB in the league; no deal yet, but he IS practicing. Low impact unless it turns into a hold-in.</li>
+<li><strong>Patrick Mahomes fully cleared</strong> for training camp — removes the biggest QB health question mark in the market. KC win total / futures should firm up.</li>
+<li><strong>49ers HC Kyle Shanahan</strong> recovering from a car-accident concussion; not with team to open camp, expected back during camp. Minor futures drag if absence extends.</li>
+<li><strong>Cardinals re-sign QB Jacoby Brissett</strong> (1 yr, ~$15.5M) — locks in AZ's QB2, relevant to Kyler Murray injury contingencies.</li>
+<li><strong>Patriots offer Christian Gonzalez</strong> a market-resetting CB extension — retention positive for NE's defense.</li>
 </ul>
+
 <h2>🏥 INJURY UPDATES</h2>
-<h3>NFL — Camp PUP/NFI &amp; Injury Designations</h3>
-<table><thead><tr><th>Team</th><th>Player</th><th>Position</th><th>Status</th><th>Change</th><th>Betting Impact</th></tr></thead><tbody>
-<tr><td>KC</td><td>Patrick Mahomes ⚠️</td><td>QB</td><td>Cleared</td><td>Off rehab, cleared for camp</td><td>Major positive — KC win total/futures should firm</td></tr>
-<tr><td>SF</td><td>George Kittle ⚠️</td><td>TE</td><td>PUP</td><td>Placed on PUP (Achilles)</td><td>Negative for SF offense; Week 1 vs LAR availability in doubt</td></tr>
-<tr><td>SF</td><td>Mykel Williams</td><td>DL</td><td>PUP</td><td>Placed on PUP (knee)</td><td>Depth concern on SF DL</td></tr>
-<tr><td>SF</td><td>Alfred Collins</td><td>DL</td><td>PUP</td><td>Placed on PUP (shoulder)</td><td>Depth concern</td></tr>
-<tr><td>SF</td><td>Isaac Guerendo</td><td>RB</td><td>PUP</td><td>Placed on PUP (pectoral)</td><td>RB depth thins</td></tr>
-<tr><td>SEA</td><td>Zach Charbonnet</td><td>RB</td><td>PUP</td><td>Placed on PUP (torn ACL)</td><td>Champs' RB room short-handed early</td></tr>
-<tr><td>SEA</td><td>Nick Emmanwori</td><td>S</td><td>PUP</td><td>Placed on PUP</td><td>Secondary depth</td></tr>
-<tr><td>SEA</td><td>Kenny McIntosh</td><td>RB</td><td>PUP</td><td>Placed on PUP</td><td>RB depth</td></tr>
-<tr><td>BAL</td><td>Nnamdi Madubuike ⚠️</td><td>DT</td><td>PUP</td><td>Placed on PUP; could return soon</td><td>BAL has NFL-high 11.5 win total — monitor DL health</td></tr>
-<tr><td>BAL</td><td>Travis Jones</td><td>DT</td><td>PUP</td><td>Placed on PUP</td><td>Interior DL depth</td></tr>
-<tr><td>BAL</td><td>John Jenkins</td><td>DT</td><td>PUP</td><td>Placed on PUP</td><td>Interior DL depth</td></tr>
-<tr><td>BAL</td><td>Teddye Buchanan</td><td>ILB</td><td>PUP</td><td>Placed on PUP</td><td>Depth</td></tr>
-<tr><td>BAL</td><td>Adisa Isaac</td><td>OLB</td><td>PUP</td><td>Placed on PUP</td><td>Pass-rush depth</td></tr>
-<tr><td>BAL</td><td>Bilhal Kone</td><td>CB</td><td>PUP</td><td>Placed on PUP</td><td>Depth</td></tr>
-<tr><td>SF</td><td>Kyle Shanahan (HC) ⚠️</td><td>Coach</td><td>Out (concussion)</td><td>Car accident in July; expected back during camp</td><td>Coaching absence early in camp installs</td></tr>
-<tr><td>NE</td><td>Gabe Jacas</td><td>EDGE (R2)</td><td>Unsigned</td><td>Not in camp</td><td>Minor unless prolonged</td></tr>
+<h3>NFL — Camp PUP/NFI Designations</h3>
+<table><thead><tr>
+<th>Team</th><th>Player</th><th>Position</th><th>Status</th><th>Change</th><th>Betting Impact</th>
+</tr>
+</tr></thead><tbody>
+<tr>
+<td>KC</td><td>Patrick Mahomes</td><td>QB ⚠️</td><td>Cleared</td><td>Full go for camp</td><td>KC futures/win total firm; fade any lingering injury discount</td>
+</tr>
+<tr>
+<td>CAR</td><td>Jaycee Horn</td><td>CB</td><td>Reserve/NFI (foot cut)</td><td>New designation</td><td>CB1 out — leans under on CAR win total; opposing pass games upgraded</td>
+</tr>
+<tr>
+<td>CAR</td><td>Taylor Moton</td><td>RT ⚠️</td><td>Reserve/NFI (lung blood clot)</td><td>New designation</td><td>Starting RT out indefinitely — OL downgrade, CAR under angle stacks</td>
+</tr>
+<tr>
+<td>CAR</td><td>Nic Scourton</td><td>EDGE</td><td>Injured</td><td>Pass rush thinner</td><td>Compounds CAR defensive concerns</td>
+</tr>
+<tr>
+<td>SEA</td><td>Zach Charbonnet</td><td>RB</td><td>Active/PUP (torn ACL)</td><td>On PUP to open camp</td><td>RB room thinner; monitor Walker workload pricing</td>
+</tr>
+<tr>
+<td>SEA</td><td>Nick Emmanwori</td><td>S</td><td>PUP</td><td>Placed 7/17</td><td>Secondary depth watch</td>
+</tr>
+<tr>
+<td>NE</td><td>Harold Landry</td><td>EDGE</td><td>Active/PUP</td><td>On PUP</td><td>Depth concern only for now</td>
+</tr>
+<tr>
+<td>BAL</td><td>C.J. Dippre</td><td>TE</td><td>Active/PUP</td><td>On PUP</td><td>Minimal</td>
+</tr>
+<tr>
+<td>SF</td><td>George Kittle</td><td>TE ⚠️</td><td>Active/PUP (Achilles)</td><td>Carried from 7/26</td><td>Week 1 vs LAR (Melbourne) availability in doubt; SF negatives stacking</td>
+</tr>
+<tr>
+<td>SF</td><td>Kyle Shanahan</td><td>HC</td><td>Concussion (car accident)</td><td>Away from team</td><td>Watch for extended absence → SF prep quality</td>
+</tr>
+<tr>
+<td>BAL</td><td>Nnamdi Madubuike</td><td>DT ⚠️</td><td>Active/PUP</td><td>Carried from 7/26</td><td>11.5 win total leaves no margin — track return timeline</td>
+</tr>
 </tbody></table>
+
 <h3>NCAAF — Significant Injuries</h3>
 <ul>
-<li><strong>Texas A&amp;M</strong> — RB Rueben Owens injury flagged as one that may reshape conference/playoff projections.</li>
-<li><strong>Notre Dame</strong> (+650/+700 title odds) — OL Charles Jagusah injury noted entering fall camp; watch Irish OL depth.</li>
+<li><strong>Notre Dame</strong>: RG Charles Jagusah (nerve damage, UTV accident) <strong>out to start the season</strong> — projected starter and one of the best interior OL in the country. Freeman also flagged updates at LB, WR, and interior DL. Relevant to ND -20 opener vs Wisconsin.</li>
+<li>Assorted fall-camp injury flags at Colorado, South Carolina, and Clemson (leg/back/undisclosed) — monitor as camps formalize reports.</li>
 </ul>
+
 <h2>📈 LINE MOVEMENT</h2>
 <ul>
-<li>No weekly game lines active yet. Futures/openers of note:</li>
-<li><strong>NFL Week 1 openers</strong>: SEA -3.5 vs NE (Super Bowl rematch, Wed 9/9); LAR -3.5 vs SF (Melbourne, Australia — first-ever regular season game there, Thu 9/10); LAC -11.5 vs ARI is the week's biggest spread (rare for Week 1 — potential fade candidate); tightest: HOU/BUF -1.5, MIN/GB -1.5.</li>
-<li><strong>Win totals</strong>: BAL and LAR top the market at 11.5. Ten teams sit at 10.5+ (up from six last year — books see parity at the top). DEN and NE are priced 4.5 wins BELOW their 2025 records — steepest projected declines.</li>
-<li><strong>CFB National Championship</strong>: Ohio State +550/+600 favorite, Notre Dame +650/+700, Texas and Indiana ~+750, Oregon +800. Seven schools at 11-1 or shorter.</li>
+<li>No weekly game lines yet — market is futures/win totals plus the HOF game.</li>
+<li><strong>HOF Game (Aug 6, Canton)</strong>: Panthers -1.5 vs Cardinals, total 35.5, CAR -125/AZ +105. Starters unlikely to play much; low-limit market.</li>
+<li><strong>Win totals</strong>: Ravens and Rams top the board at 11.5; ten teams at 10.5+ (up from six last year). Broncos and Patriots totals sit ~4.5 wins below their 2025 records — market pricing regression.</li>
+<li><strong>Schedule-strength note</strong>: hardest slates CHI/MIA/GB; easiest CLE/CIN/NO.</li>
+<li><strong>NFL Week 1 openers (unchanged)</strong>: SEA -3.5 vs NE (SB rematch), LAR -3.5 vs SF (Melbourne), LAC -11.5 vs ARI (week's biggest spread — fade candidate).</li>
+<li><strong>CFB Week 1 openers</strong>: LSU -11 vs Clemson (largest Clemson opening dog number since 2024), Notre Dame -20 vs Wisconsin, Auburn -7 vs Baylor, UNC -6.5 vs TCU, NC State -3 vs Virginia. Early board is still pricing brands over Week 1 certainty — value is in numbers vs key thresholds.</li>
 </ul>
+
 <h2>🌤️ WEATHER WATCH</h2>
-<ul><li>No games this week. Week 1 planning note: LAR–SF at Melbourne Cricket Ground (Australian winter, but travel/jet lag is the real variable — both teams cross ~17 time zones).</li></ul>
+<ul>
+<li>No games within the 3-day window. First outdoor game: HOF Game in Canton, OH (Aug 6) — begin weather checks ~Aug 3.</li>
+</ul>
+
 <h2>📱 SOCIAL PULSE</h2>
 <ul>
-<li><strong>Mahomes cleared</strong> is the dominant camp storyline — sentiment strongly positive on KC.</li>
-<li><strong>Shanahan car accident/concussion</strong> driving 49ers concern chatter alongside the four PUP placements.</li>
-<li><strong>Puka Nacua contract saga</strong> (final year of rookie deal, seeking ~$43M/yr in line with JSN's 4yr/$168.6M): expected to practice while negotiating; Rams may prefer to wait and use the franchise tag. Hold-in risk is the thing to monitor for a LAR team carrying an 11.5 win total.</li>
-<li>Also circulating: Tony Romo arrested on suspicion of OWI (broadcast, not betting impact); Texans traded for RB David Montgomery to be their workhorse — modest positive for HOU rushing efficiency.</li>
+<li>Shanahan's car accident/concussion is the dominant NFL story of the day.</li>
+<li>Mahomes' full clearance trending — offseason injury narrative closed.</li>
+<li>Gonzalez contract talks in NE driving roster/extension chatter as veterans reported 7/24; all 32 teams in camp by 7/28.</li>
+<li>Ongoing watch: Puka Nacua contract talks (hold-in risk = LAR sell signal on an 11.5 win total).</li>
 </ul>
+
 <h2>🏈 COLLEGE UPDATES</h2>
 <ul>
-<li>~40 days to kickoff. Fall camps opening; title market: Ohio State favored, Notre Dame second, Texas/Indiana/Oregon chasing.</li>
-<li>Injuries to A&amp;M's Rueben Owens and ND's Charles Jagusah are the early camp flags.</li>
-<li>Books (FanDuel/DraftKings) have full futures boards up — lines will move on camp battles and media-day news over the next 2–3 weeks. Lock value now where you have conviction.</li>
+<li>Notre Dame's Jagusah loss is the most bet-relevant CFB injury so far; ND -20 vs Wisconsin worth monitoring for drift.</li>
+<li>Week 1 opening lines posted at BetOnline for 51 games; expect movement as fall camps produce depth-chart clarity through August.</li>
 </ul>
+
 <h2>✅ TODAY'S BETTING CHECKLIST</h2>
 <ul>
-<li><strong>KC win total / futures</strong>: If Mahomes stacks full-team practices this week, expect the number to move — act early if buying.</li>
-<li><strong>SF unders / LAR -3.5 (Melbourne)</strong>: Kittle PUP + 3 more PUPs + Shanahan absence = accumulating SF negatives. Monitor whether the Week 1 line drifts toward LAR -4/-4.5.</li>
-<li><strong>LAC -11.5 vs ARI</strong>: Historically inflated Week 1 big favorites — candidate to shop for ARI +12/+12.5 later or fade the public.</li>
-<li><strong>DEN/NE win-total unders already priced steeply</strong> (-4.5 vs 2025 wins) — look for overcorrection value on the overs if camp news is positive.</li>
-<li><strong>Puka Nacua</strong>: any hold-in escalation is a LAR win-total/Week 1 sell signal.</li>
-<li><strong>BAL DL (Madubuike)</strong>: 11.5 win total leaves no margin — track his return-to-practice timeline.</li>
-<li><strong>CFB futures</strong>: shop Ohio State +600 vs +550 across books; ND OL injury worth watching before backing at +650.</li>
+<li><strong>CAR under</strong> angle strengthening: Horn (NFI) + Moton (NFI) + Scourton — check current CAR win total before the market fully prices it.</li>
+<li><strong>KC futures</strong>: confirm no residual Mahomes injury discount remains; if so, act.</li>
+<li><strong>Denver/New England totals</strong> already price big regression (-4.5 vs 2025 wins) — evaluate whether the fade is overdone, especially NE coming off a Super Bowl LX berth.</li>
+<li><strong>Clemson +11 vs LSU</strong>: flag for model comparison once CFB power ratings update.</li>
+<li>Monitor: HOF game line into next week; ND -20 for Jagusah-related drift.</li>
 </ul>
+
 <hr>
-<p><em>Daily report: 2026-07-26 (offseason scan) — sources: NFL.com, Yahoo Sports, SI, ESPN, CBS Sports, Covers, BetMGM, VSiN, FOX Sports</em></p>
+<p><em>Daily report: 2026-07-27 (generated by scheduled intel scan)</em></p>
+
+<p>Sources: <a href="https://sports.yahoo.com/nfl/live/nfl-news-live-updates-training-camp-2026-schedule-injury-news-163112222.html" target="_blank">Yahoo camp live updates</a>, <a href="https://www.cbssports.com/nfl/news/nfl-injury-updates-2026-patrick-mahomes-malik-nabers-training-camp/" target="_blank">CBS injury updates</a>, <a href="https://sicscore.com/news/2026-nfl-season-players-on-reserve-pup-and-nfi-lists" target="_blank">SIC PUP/NFI list</a>, <a href="https://www.foxsports.com/stories/nfl/2026-nfl-win-totals-over-unders-all-32-squads" target="_blank">FOX win totals</a>, <a href="https://www.sportsbookreview.com/picks/college-football/early-college-football-opening-lines-weeks-0-1-2-2026/" target="_blank">SBR CFB opening lines</a>, <a href="https://atozsports.com/college-football/notre-dame-fighting-irish-news/notre-dame-football-marcus-freeman-delivers-key-injury-updates-charles-jagusah-kyngstonn-viliamu-asa-quincy-porter/" target="_blank">ND injury updates</a>, <a href="https://www.busr.ag/news/nfl/nfl-odds-for-2026-nfl-hall-of-fame-game" target="_blank">HOF game odds</a></p>
+
 <!-- INTEL_CONTENT_END -->
+  </div>
+</div>
+
+<!-- ═══════════ WEEKLY INTEL PANEL ═══════════ -->
+<div class="sport-panel" id="panel-weekly">
+  <div class="intel-wrap weekly-wrap">
+    <!-- WEEKLY_INTEL_CONTENT_START -->
+<div class="intel-meta">Report date: <strong>2026-07-27</strong> &nbsp;·&nbsp; Updated: July 27, 2026 at 08:17 AM</div><h1>NFL + NCAAF Weekly Intel Report — July 27, 2026</h1>
+
+<p><em>Offseason context: veterans reported to camp July 24; all 32 teams in full camp by July 28. No weekly game injury reports exist yet — this report covers PUP/NFI/IR placements and camp intel.</em></p>
+
+<h2>🏥 INJURY REPORT</h2>
+
+<h3>NFL</h3>
+
+<p><strong>HIGH IMPACT ⚠️</strong></p>
+<ul>
+<li><strong>Patrick Mahomes (QB, KC)</strong> — expected to start camp on PUP, though Andy Reid says he's fully cleared to practice. Monitor for lingering effects on KC win total / Week 1 lines. ⚠️</li>
+<li><strong>J.J. McCarthy (QB, MIN)</strong> — healthy but losing the QB battle badly to Kyler Murray (see betting intel). ⚠️</li>
+<li><strong>Michael Penix Jr. (QB, ATL)</strong> — recovering from torn ACL / offseason knee surgery; not cleared for 11-on-11s in spring. Tua likely QB1. ⚠️</li>
+<li><strong>Malik Nabers (WR1, NYG)</strong> — tore right ACL Week 4 2025, second procedure on same knee. Giants passing game a major question. ⚠️</li>
+<li><strong>George Kittle (TE, SF)</strong> — sitting out start of camp after January Achilles tear. ⚠️</li>
+<li><strong>Kyle Shanahan (HC, SF)</strong> — not at camp start; recovering from injuries in a July car accident. Coaching absence is line-relevant. ⚠️</li>
+</ul>
+
+<p><strong>Other notable PUP/NFI placements:</strong></p>
+<ul>
+<li>SF: Nick Bosa and Fred Warner both READY after 2025 season-ending injuries; Mykel Williams (ACL) returning</li>
+<li>SEA: S Nick Emmanwori (PUP), RB Zach Charbonnet (PUP, torn ACL)</li>
+<li>CAR: DE Nic Scourton reportedly tore ACL — rookie pass rush thinned before camp</li>
+<li>DET: S Brian Branch and S Kerby Joseph both open camp on PUP — entire starting safety tandem</li>
+<li>BAL: DL Nnamdi Madubuike (could return soon), Travis Jones, John Jenkins; LB Teddye Buchanan, OLB Adisa Isaac, CB Bilhal Kone (all PUP)</li>
+<li>CHI: CB Kyler Gordon (primary slot CB) on PUP (7/25)</li>
+<li>DEN/CAR: CB Jaycee Horn on reserve/NFI (foot cut, stitches, 7/21)</li>
+</ul>
+
+<h3>NCAAF</h3>
+<ul>
+<li>No major Top-25 injury news surfaced this week; camps opening in early August. SP+ top teams (see CFB section) enter camp largely healthy per available reporting.</li>
+</ul>
+
+<h2>📋 TRANSACTIONS & ROSTER MOVES</h2>
+
+<ul>
+<li><strong>7/23:</strong> Fernando Mendoza (QB) signed 4yr/$57.2M with Las Vegas; Jermod McCoy (CB) 4yr/$5.68M with Las Vegas; Ethan Pocic (C) 1yr with Baltimore; Zach Thomas (T) to Tennessee; Caden Prieskorn (TE) to Carolina</li>
+<li><strong>7/23 waivers:</strong> Ryan Hayes (LT) waived by Tennessee; Diego Pavia (QB) waived by Baltimore</li>
+<li><strong>7/22:</strong> Brandon Johnson (CB) to Seattle; Riley Wilson (LB) to New England</li>
+<li><strong>MIA:</strong> Jordyn Brooks (LB) contract extension</li>
+<li><strong>ARI:</strong> Jacoby Brissett received a raise</li>
+<li>Holdout/hold-in watch: July 24 report date was the checkpoint for several extension standoffs; monitor daily fine reports ($50K/day vets) for hold-ins</li>
+</ul>
+
+<h2>📊 BETTING INTEL</h2>
+
+<ul>
+<li><strong>Week 1 openers (season starts Sept 9):</strong> SEA -4.5 vs NE (Super Bowl LX rematch, Wednesday night opener); LAC -11.5 vs ARI — largest opening-week spread since 2012; LAR vs SF in Australia (first NFL game there)</li>
+<li><strong>Hall of Fame Game:</strong> Panthers vs Cardinals, Aug 6 (NBC/Peacock)</li>
+<li><strong>Win totals:</strong> juice shifting toward unders league-wide in July, but models still lean over. Sharp money already positioned — August bettors get stale numbers.</li>
+<li>SEA over: 10.96-win projection vs. line, ~56.7% cover probability (widest positive gap)</li>
+<li>LAC under 9.5: 7th-toughest schedule, league-worst rest differential, heavy travel</li>
+<li>Toughest schedules: CHI, MIA, GB</li>
+<li><strong>QB-battle line impact:</strong> Murray "not close" ahead of McCarthy in MIN; Tua ahead of Penix in ATL — both resolutions already leaking into futures</li>
+</ul>
+
+<h2>📱 SOCIAL & BULLETIN BOARD BUZZ</h2>
+
+<ul>
+<li>Dominant camp storylines: MIN and ATL QB competitions (Murray/McCarthy, Tua/Penix)</li>
+<li>Shanahan car-accident absence is the top 49ers story alongside Kittle's Achilles timeline</li>
+<li>Mahomes PUP status generating buzz despite Reid's "fully cleared" framing</li>
+<li>Beat-reporter consensus from OTAs: Murray–McCarthy gap "was not close" — all signs point to Murray Week 1</li>
+<li>r/CFB focus: transfer portal class rankings and playoff-contender reshuffling (direct Reddit results limited this week)</li>
+</ul>
+
+<h2>🏈 COLLEGE FOOTBALL UPDATES</h2>
+
+<ul>
+<li><strong>SP+ preseason top tier:</strong> Ohio State #1, Oregon, Notre Dame (#8, 9.8 proj. wins), Georgia, defending champ Indiana; Texas #6 (underdog only vs OSU but eight projected top-20 opponents), Texas Tech, Miami in top 25</li>
+<li><strong>Portal powerhouses:</strong> Ohio State, Miami, Texas, Ole Miss, LSU flagged as portal classes that could shake up the CFP</li>
+<li>Texas: 19 portal signings incl. WR Cam Coleman (ex-Auburn 5-star, pairs with Arch Manning) and LB Rasheem Biles (Pitt)</li>
+<li>Texas Tech: topped On3 roster-improvement index, reloaded DL</li>
+<li>Georgia: added Isiah Canion from Georgia Tech</li>
+<li>Note: Indiana as defending champion — factor into 2026 NCAAF model priors</li>
+</ul>
+
+<h2>⚡ HIGH-PRIORITY ALERTS</h2>
+
+<li><strong>MIN QB battle effectively over — Kyler Murray QB1.</strong> Vikings lines/futures should be modeled on Murray, not McCarthy.</li>
+<li><strong>Mahomes on PUP.</strong> Even if precautionary, any setback moves KC futures and Week 1 markets sharply.</li>
+<li><strong>SEA over (10.5-ish) is the model-consensus best win-total value</strong> — and Seattle opens -4.5 vs NE with a healthy roster narrative (minus Emmanwori/Charbonnet on PUP).</li>
+<li><strong>ATL QB switch to Tua</strong> — Penix behind after ACL; Falcons projections should assume Tagovailoa.</li>
+<li><strong>DET both starting safeties (Branch, Joseph) on PUP</strong> — early-season Lions defensive backfield risk if either lingers; watch totals/opponent pass props.</li>
+
+<h2>📅 NEXT WEEK PREVIEW</h2>
+
+<ul>
+<li>All 32 teams in full camp by 7/28 — first wave of practice reports, hold-in confirmations, and PUP activations</li>
+<li>Hall of Fame Game Aug 6 (CAR vs ARI) — first betting market of the season; preseason lines posting</li>
+<li>Watch: Mahomes PUP activation date, Kittle practice timeline, Shanahan return, DET safety activations, any camp soft-tissue injuries (highest-frequency window of the year)</li>
+<li>NCAAF camps open early August; preseason AP poll and updated SP+ due in August</li>
+</ul>
+
+<hr>
+<p><em>Report generated: 2026-07-27 | Sources checked: ~20 (searches + aggregated coverage)</em></p>
+
+<h2>Sources</h2>
+<ul>
+<li><a href="https://sports.yahoo.com/articles/nfl-training-camp-2026-live-223744041.html" target="_blank">Yahoo: NFL Training Camp 2026 Live Updates</a></li>
+<li><a href="https://www.si.com/nfl/injury-tracker-full-list-players-training-camp-pup-nfi-ir" target="_blank">SI: NFL Injury Tracker — PUP/NFI/IR list</a></li>
+<li><a href="https://www.cbssports.com/nfl/news/nfl-injury-updates-2026-patrick-mahomes-malik-nabers-training-camp/" target="_blank">CBS: Notable NFL injuries — Mahomes, Nabers, Kittle</a></li>
+<li><a href="https://sports.yahoo.com/nfl/live/nfl-news-live-updates-training-camp-2026-schedule-injury-news-163112222.html" target="_blank">Yahoo: camp live updates — Brissett raise, Shanahan accident</a></li>
+<li><a href="https://www.baltimoreravens.com/news/nnamdi-madubuike-travis-jones-teddye-buchanan-john-jenkins-pup-list-training-camp" target="_blank">Ravens.com: Madubuike + six on PUP</a></li>
+<li><a href="https://heavy.com/sports/nfl/chicago-bears/kyler-gordon-pup-list-camp-news/" target="_blank">Heavy: Kyler Gordon PUP</a></li>
+<li><a href="https://www.nfl.com/transactions/" target="_blank">NFL.com transactions</a> / <a href="https://www.spotrac.com/nfl/transactions" target="_blank">Spotrac transactions</a></li>
+<li><a href="https://www.espn.com/nfl/story/_/id/49153923/2026-nfl-contract-extensions-signings-negotiations-all-32-teams" target="_blank">ESPN: 2026 contract extension updates</a></li>
+<li><a href="https://www.pff.com/news/bet-nfl-betting-2026-pff-projected-win-totals-for-all-32-teams" target="_blank">PFF: 2026 projected win totals</a></li>
+<li><a href="https://www.atsstats.com/nfl-win-totals-101-mastering-the-2026-futures-market/" target="_blank">ATS Stats: win totals market timing</a></li>
+<li><a href="https://www.espn.com/espn/betting/story/_/id/48432180/2026-nfl-schedule-release-season-week-1-games-betting-odds-spreads-lines-highlights" target="_blank">ESPN: Week 1 betting odds</a></li>
+<li><a href="https://www.foxsports.com/stories/nfl/2026-nfl-odds-week-1-lines-spreads-all-16-games" target="_blank">FOX: Week 1 lines all 16 games</a></li>
+<li><a href="https://www.espn.com/college-football/story/_/id/48306284/2026-college-football-sp+-rankings-138-fbs-teams" target="_blank">ESPN: 2026 SP+ all 138 teams</a></li>
+<li><a href="https://www.si.com/fannation/college/cfb-hq/transfer-portal/5-transfer-portal-powerhouses-shake-up-2026-college-football-playoff-ohio-state-miami-texas-ole-miss-lsu" target="_blank">SI: 5 transfer portal powerhouses</a></li>
+<li><a href="https://bleacherreport.com/articles/25455525-nfl-training-camps-2026-schedule-and-predictions-qb1-battles" target="_blank">Bleacher Report: QB1 battle predictions</a></li>
+<li><a href="https://www.espn.com/nfl/story/_/id/49377860/2026-nfl-season-training-camp-storylines-quarterbacks-rookies-injuries" target="_blank">ESPN: camp storylines</a></li>
+</ul>
+
+<!-- WEEKLY_INTEL_CONTENT_END -->
   </div>
 </div>
 
