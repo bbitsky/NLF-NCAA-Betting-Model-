@@ -514,7 +514,7 @@
 <div class="sport-panel" id="panel-intel">
   <div class="intel-wrap">
     <!-- INTEL_CONTENT_START -->
-<div class="intel-meta">Report date: <strong>2026-07-27</strong> &nbsp;·&nbsp; Updated: July 27, 2026 at 08:17 AM</div><h1>NFL + NCAAF Daily Intel — July 27, 2026</h1>
+<div class="intel-meta">Report date: <strong>2026-07-27</strong> &nbsp;·&nbsp; Updated: July 27, 2026 at 08:29 AM</div><h1>NFL + NCAAF Daily Intel — July 27, 2026</h1>
 
 <p><em>Note: This run executed ahead of the regular in-season schedule (camps just opening; season opener Sept 9). Content is training-camp focused. First game on the board: Hall of Fame Game, Aug 6.</em></p>
 
@@ -624,7 +624,7 @@
 <div class="sport-panel" id="panel-weekly">
   <div class="intel-wrap weekly-wrap">
     <!-- WEEKLY_INTEL_CONTENT_START -->
-<div class="intel-meta">Report date: <strong>2026-07-27</strong> &nbsp;·&nbsp; Updated: July 27, 2026 at 08:17 AM</div><h1>NFL + NCAAF Weekly Intel Report — July 27, 2026</h1>
+<div class="intel-meta">Report date: <strong>2026-07-27</strong> &nbsp;·&nbsp; Updated: July 27, 2026 at 08:29 AM</div><h1>NFL + NCAAF Weekly Intel Report — July 27, 2026</h1>
 
 <p><em>Offseason context: veterans reported to camp July 24; all 32 teams in full camp by July 28. No weekly game injury reports exist yet — this report covers PUP/NFI/IR placements and camp intel.</em></p>
 
@@ -1526,4 +1526,27 @@ function generateBreakdown(r, sport) {
           '<td>' + b.date + '</td>' +
           '<td>' + b.matchup + '</td>' +
           '<td>' + b.pick + '</td>' +
-          '<td style="text-align:center
+          '<td style="text-align:center">' + b.odds + '</td>' +
+          '<td style="text-align:right">' + fmt$(b.amount) + '</td>' +
+          '<td style="text-align:right">' + fmt$(toWin) + '</td>' +
+          '<td style="text-align:center;white-space:nowrap">' +
+            '<button style="' + wStyle + '" onclick="setBetResult(' + b.id + ',\'win\')">W</button>' +
+            '<button style="' + lStyle + '" onclick="setBetResult(' + b.id + ',\'loss\')">L</button>' +
+            '<button style="' + pStyle + '" onclick="setBetResult(' + b.id + ',\'push\')">P</button>' +
+          '</td>' +
+          '<td style="text-align:right;' + pnlStyle + '">' + (b.result !== 'pending' ? (profit >= 0 ? '+' : '') + fmt$(profit) : '—') + '</td>' +
+          '<td style="text-align:right;' + bkStyle + '">' + fmt$(runBk) + '</td>' +
+          '<td><button onclick="deleteBet(' + b.id + ')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 6px" title="Delete">✕</button></td>' +
+          '</tr>';
+      });
+      tbody.innerHTML = rows.reverse().join('');
+    }
+  };
+
+  window.renderTracker();
+  buildQuickFill();
+
+})();
+</script>
+</body>
+</html>
