@@ -14,8 +14,17 @@ One-time setup:
   3. Authenticate once via browser popup or Personal Access Token
 """
 
-import os, re, subprocess, shutil, glob
+import os, re, subprocess, shutil, glob, sys
 from datetime import datetime
+
+# When run from run_daily_push.bat, stdout is redirected to push_log.txt and
+# defaults to cp1252 on Windows — which crashes on the ✓/⚠ characters below.
+# Force UTF-8 (with replacement) so logging can never kill the push.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
 
 REPO_DIR      = r"C:\Users\bitsk\Claude\Projects\NFL Betting Model"
 INTEL_DIR     = os.path.join(REPO_DIR, "intel_reports")
@@ -36,6 +45,44 @@ def git(*args):
     if r.returncode != 0 and r.stderr.strip():
         print(f"  [git {' '.join(args[:2])}]: {r.stderr.strip()[:300]}")
     return r
+
+
+# ─────────────────────────────────────────
+# Section filter
+# ─────────────────────────────────────────
+# Headings matching these patterns are dropped from the report before it
+# reaches the dashboard. Social/buzz sections were vague chatter that the
+# BREAKING / INJURY / LINE MOVEMENT sections already cover with hard sourcing.
+DROP_SECTION_PATTERNS = [
+    r"social",
+    r"bulletin\s*board",
+    r"\bbuzz\b",
+]
+
+
+def strip_sections(md: str) -> str:
+    """Remove any ##/### section whose heading matches DROP_SECTION_PATTERNS.
+
+    A section runs from its heading to the next heading of the same or higher
+    level (or EOF), so nested content is dropped with it.
+    """
+    out, drop_level = [], None
+    for line in md.split('\n'):
+        m = re.match(r'^(#{1,6})\s+(.*)$', line)
+        if m:
+            level, text = len(m.group(1)), m.group(2)
+            if drop_level is not None and level <= drop_level:
+                drop_level = None
+            if drop_level is None and any(
+                re.search(pat, text, re.I) for pat in DROP_SECTION_PATTERNS
+            ):
+                drop_level = level
+                print(f"  · dropped section: {text.strip()[:70]}")
+                continue
+        if drop_level is not None:
+            continue
+        out.append(line)
+    return '\n'.join(out)
 
 
 # ─────────────────────────────────────────
@@ -162,8 +209,8 @@ def md_to_html(md: str) -> str:
 # ─────────────────────────────────────────
 # Find latest intel report
 # ─────────────────────────────────────────
-def find_latest_report():
-    pattern = os.path.join(INTEL_DIR, "daily_intel_*.md")
+def find_latest_report(prefix: str = "daily_intel_"):
+    pattern = os.path.join(INTEL_DIR, f"{prefix}*.md")
     files = sorted(glob.glob(pattern), reverse=True)
     return files[0] if files else None
 
@@ -171,11 +218,11 @@ def find_latest_report():
 # ─────────────────────────────────────────
 # Inject intel report into dashboard HTML
 # ─────────────────────────────────────────
-def inject_intel(report_path: str):
+def inject_intel(report_path: str, prefix: str = "daily_intel_", marker: str = "INTEL_CONTENT"):
     with open(report_path, encoding='utf-8') as f:
         md = f.read()
 
-    report_date = os.path.basename(report_path).replace('daily_intel_', '').replace('.md', '')
+    report_date = os.path.basename(report_path).replace(prefix, '').replace('.md', '')
     generated_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
     meta_html = (
@@ -184,23 +231,26 @@ def inject_intel(report_path: str):
         f'Updated: {generated_at}'
         f'</div>'
     )
-    body_html = md_to_html(md)
+    body_html = md_to_html(strip_sections(md))
     content_html = meta_html + body_html
 
     with open(DASHBOARD_SRC, encoding='utf-8') as f:
         dashboard = f.read()
 
-    new_dashboard = re.sub(
-        r'<!-- INTEL_CONTENT_START -->.*?<!-- INTEL_CONTENT_END -->',
-        f'<!-- INTEL_CONTENT_START -->\n{content_html}\n<!-- INTEL_CONTENT_END -->',
+    new_dashboard, n = re.subn(
+        rf'<!-- {marker}_START -->.*?<!-- {marker}_END -->',
+        lambda _m: f'<!-- {marker}_START -->\n{content_html}\n<!-- {marker}_END -->',
         dashboard,
         flags=re.DOTALL
     )
+    if n == 0:
+        print(f"⚠ Marker {marker}_START not found in picks_dashboard.html — skipped")
+        return None
 
     with open(DASHBOARD_SRC, 'w', encoding='utf-8') as f:
         f.write(new_dashboard)
 
-    print(f"✓ Injected intel report ({report_date}) into picks_dashboard.html")
+    print(f"✓ Injected {marker} report ({report_date}) into picks_dashboard.html")
     return report_date
 
 
@@ -212,13 +262,20 @@ def main():
     print("  GitHub Pages push — NLF-NCAA-Betting-Model-")
     print("=" * 56)
 
-    # 1. Find and inject latest intel report
-    report_path = find_latest_report()
+    # 1. Find and inject latest daily intel report
+    report_path = find_latest_report("daily_intel_")
     if report_path:
-        report_date = inject_intel(report_path)
+        report_date = inject_intel(report_path, "daily_intel_", "INTEL_CONTENT")
     else:
-        print("⚠ No intel reports found in intel_reports/ — skipping injection")
+        print("⚠ No daily intel reports found in intel_reports/ — skipping injection")
         report_date = "no-report"
+
+    # 1b. Find and inject latest weekly intel report (separate tab)
+    weekly_path = find_latest_report("weekly_intel_")
+    if weekly_path:
+        inject_intel(weekly_path, "weekly_intel_", "WEEKLY_INTEL_CONTENT")
+    else:
+        print("⚠ No weekly intel reports found — weekly tab left as-is")
 
     # 2. Copy dashboard → index.html
     if not os.path.exists(DASHBOARD_SRC):
@@ -243,6 +300,9 @@ def main():
     git("add", "index.html")
     git("add", "picks_dashboard.html")
     git("add", os.path.join("intel_reports", "."))   # all intel reports
+    git("add", "push_to_github.py")  # keep this script's own fixes committed —
+    # an unstaged edit here blocked `pull --rebase` every run and forced a
+    # daily force-push (see push_log.txt entries before 2026-08-26)
 
     # 5. Commit
     date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -257,11 +317,13 @@ def main():
     #    directly, e.g. via the web uploader), then push.
     print("Syncing with GitHub...")
     git("fetch", "origin")
-    rebase = git("pull", "--rebase", "origin", "main")
+    # --autostash: unstaged working-tree changes (logs, scratch files) no
+    # longer abort the rebase and trigger a needless daily force-push.
+    rebase = git("pull", "--rebase", "--autostash", "origin", "main")
     if rebase.returncode != 0:
-        # A conflicting commit exists on GitHub (e.g. a same-day web upload).
-        # Local files are the source of truth, so drop the conflict and
-        # force-push our version.
+        # A genuinely conflicting commit exists on GitHub (e.g. a same-day
+        # web upload). Local files are the source of truth, so drop the
+        # conflict and force-push our version.
         print("  ⚠ Remote has a conflicting commit — keeping LOCAL version (source of truth).")
         git("rebase", "--abort")
         push = git("push", "--force", "-u", "origin", "main")
