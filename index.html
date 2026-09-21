@@ -248,17 +248,17 @@
 <div class="header">
   <div>
     <h1>🏈 <span class="nfl">NFL</span> &amp; <span class="ncaaf">NCAAF</span> Betting Model &nbsp;2026</h1>
-    <div style="font-size:11px;color:var(--muted);margin-top:2px">XGBoost · Trained on 6,947 NFL + 58,000 NCAAF games</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px"><!-- TRAINED_ON_START -->XGBoost · Trained on 7,276 NFL + 8,011 NCAAF games<!-- TRAINED_ON_END --></div>
   </div>
   <div class="header-right">
-    <span class="live-badge">LIVE</span><br>Generated June 28, 2026
+    <span class="live-badge">LIVE</span><br><!-- HEADER_GENERATED_START -->Generated September 19, 2026 · 7:00 PM<!-- HEADER_GENERATED_END -->
   </div>
 </div>
 
 <!-- Sport tabs -->
 <div class="sport-tabs" id="sportTabs">
-  <div class="sport-tab active nfl" data-sport="nfl">🏈 NFL (75 games)</div>
-  <div class="sport-tab ncaaf" data-sport="ncaaf">🎓 NCAAF (37 games)</div>
+  <div class="sport-tab active nfl" data-sport="nfl">🏈 NFL (<!-- NFL_TAB_COUNT_START -->29<!-- NFL_TAB_COUNT_END --> games)</div>
+  <div class="sport-tab ncaaf" data-sport="ncaaf">🎓 NCAAF (<!-- NCAAF_TAB_COUNT_START -->32<!-- NCAAF_TAB_COUNT_END --> games)</div>
   <div class="sport-tab tracker" data-sport="tracker">💰 Bet Tracker</div>
   <div class="sport-tab intel" data-sport="intel">📰 Daily Intel</div>
   <div class="sport-tab weekly" data-sport="weekly">📅 Weekly Intel</div>
@@ -266,13 +266,14 @@
 
 <!-- ═══════════ NFL PANEL ═══════════ -->
 <div class="sport-panel active" id="panel-nfl">
-<div style="background:#3a2b12;border:1px solid #8a6d1a;color:#e8c96a;padding:10px 16px;border-radius:8px;margin:10px 0;font-size:14px;">⚠ <strong>Model rebuilt July 27, 2026</strong> after an audit found the previous accuracy claims (77.5% / 78.1%) were artifacts of data bugs. Numbers now shown are honest walk-forward results (v4: EPA features tested and rejected — the closing line already prices them in; stakes stay disabled until the long-run record clears breakeven) — currently at/below the 52.4% breakeven, so treat picks as informational, not bettable. Picks tables below are from the old (buggy) model until the next in-season refresh.</div>
+<!-- NFL_BANNER_START --><div style="background:#3a2b12;border:1px solid #8a6d1a;color:#e8c96a;padding:10px 16px;border-radius:8px;margin:10px 0;font-size:14px;">⚠ <strong>Honest walk-forward results</strong> (production features: baseline). Long-run ATS accuracy is 49.9% vs a 52.4% breakeven — ATS edge picks below breakeven (49.2% on 238 games) — stakes DISABLED (informational only). Totals edge picks 49.0% on 257 games — stakes disabled. Picks below reflect the model trained on 2026-09-19.</div><!-- NFL_BANNER_END -->
 
+  <!-- NFL_STATS_START -->
   <div class="stats-bar">
     <div class="stat-card stat-nfl1">
       <div class="label">NFL ATS Accuracy (walk-forward)</div>
       <div class="value">49.9%</div>
-      <div class="sub">Long-run 2018–25 walk-forward (2,174 games) · 2024: 47.7% · 2025: 53.5% · breakeven 52.4%</div>
+      <div class="sub">Long-run 2018-25 walk-forward (2,174 games) · 2024: 47.7% · 2025: 53.5% · breakeven 52.4%</div>
     </div>
     <div class="stat-card stat-nfl2">
       <div class="label">NFL Totals Accuracy (walk-forward)</div>
@@ -281,15 +282,16 @@
     </div>
     <div class="stat-card" style="background:var(--card)">
       <div class="label">Brier Score</div>
-      <div class="value" style="color:var(--green)">0.155</div>
+      <div class="value" style="color:var(--green)">0.255</div>
       <div class="sub">Well-calibrated ATS probabilities</div>
     </div>
     <div class="stat-card stat-games">
       <div class="label">Games This Period</div>
-      <div class="value">75</div>
+      <div class="value">29</div>
       <div class="sub" id="nfl-edge-sub">Loading…</div>
     </div>
   </div>
+  <!-- NFL_STATS_END -->
 
   <div class="section">
     <div class="section-title">⭐ Highest Confidence NFL Picks</div>
@@ -330,12 +332,12 @@
 
 <!-- ═══════════ NCAAF PANEL ═══════════ -->
 <div class="sport-panel" id="panel-ncaaf">
-
+  <!-- NCAAF_STATS_START -->
   <div class="stats-bar">
     <div class="stat-card stat-ncaaf">
       <div class="label">NCAAF ATS vs Closing Line</div>
-      <div class="value">50.4%</div>
-      <div class="sub">2023: 51.8% · 2024: 48.9% · vs closing book lines</div>
+      <div class="value">48.2%</div>
+      <div class="sub">2024: 47.6% · 2025: 48.8% · vs closing book lines</div>
     </div>
     <div class="stat-card" style="background:var(--card)">
       <div class="label">NCAAF Margin MAE</div>
@@ -345,14 +347,15 @@
     <div class="stat-card" style="background:var(--card)">
       <div class="label">Top Feature</div>
       <div class="value" style="color:var(--purple);font-size:18px">SP+ Diff</div>
-      <div class="sub">46.3% importance · Bill Connelly ratings</div>
+      <div class="sub">Bill Connelly ratings (importance not recomputed this run)</div>
     </div>
     <div class="stat-card stat-games">
       <div class="label">Games This Period</div>
-      <div class="value">37</div>
+      <div class="value">32</div>
       <div class="sub" id="ncaaf-edge-sub">Loading…</div>
     </div>
   </div>
+  <!-- NCAAF_STATS_END -->
 
   <div class="section">
     <div class="section-title">⭐ Highest Confidence NCAAF Picks</div>
@@ -525,15 +528,15 @@
 <div class="sport-panel" id="panel-intel">
   <div class="intel-wrap">
     <!-- INTEL_CONTENT_START -->
-<div class="intel-meta">Report date: <strong>2026-09-19</strong> &nbsp;·&nbsp; Updated: September 19, 2026 at 07:00 PM</div><h1>NFL + NCAAF Daily Intel — 2026-09-19</h1>
+<div class="intel-meta">Report date: <strong>2026-09-21</strong> &nbsp;·&nbsp; Updated: September 21, 2026 at 09:30 AM</div><h1>NFL + NCAAF Daily Intel — 2026-09-21</h1>
 
 <h2>🚨 BREAKING / HIGH IMPACT</h2>
+<p>Two starting-caliber QBs went down this weekend and both lines have already moved 3+ points:</p>
+
 <ul>
-<li><strong>Brock Purdy (49ers) OUT Week 3 vs. Cardinals.</strong> Purdy (turf toe/shoulder) practiced Wed/Thu but was ruled out Friday. Mac Jones/backup gets the start. This is a full-point-plus line mover on the 49ers-Cardinals total and spread — expect the line to have already shifted toward Arizona.</li>
-<li><strong>Puka Nacua (Rams) DNP Friday, hip issue — Monday Night status uncertain.</strong> Rams host Giants MNF (9/21). McVay expected to update after Saturday's walkthrough. Monitor closely; a scratch would be a significant number for that game's total and Rams passing props.</li>
-<li><strong>Joe Burrow (Bengals) questionable (back) but trending toward playing</strong> vs. Texans Sunday — full participant Friday, coach and player both signaling he'll go. Market appears to be pricing him in; a late scratch would be a major line shock.</li>
-<li><strong>Nico Collins (Texans) OUT</strong> for Sunday's Bengals-Texans game — removes Houston's WR1 opposite a Burrow-led Cincinnati offense.</li>
-<li><strong>Michael Penix Jr. (Falcons)</strong> remains out (ACL recovery); <strong>Cooper Rush</strong> continues as Atlanta's starter with back spasms managed — watch for downgrade before kickoff.</li>
+<li><strong>Caleb Williams (Bears) — hamstring, carted off</strong> in Chicago's 9-3 loss to Minnesota. No official return timeline from the team; an outside sports-medicine physician projected up to 8 weeks (would cost him into Week 10/11). Bears host Philadelphia on <strong>Monday Night Football, Week 3 (Sept. 28)</strong> — line has already swung from Bears -1.5 to <strong>Eagles -4 to -4.5</strong> on the injury. ⚠️ Monitor Chicago's Wed/Thu practice report for his replacement (likely veteran backup) before locking any Week 3 number.</li>
+<li><strong>Jayden Daniels (Commanders) — dislocated left elbow, ruled out</strong> vs. Dallas. X-rays showed no fracture; further imaging Monday. This is Daniels' second elbow dislocation in less than a year (also missed 3 weeks after a Nov. 2025 dislocation vs. Seattle). No timeline yet — treat as a multi-week absence until Washington says otherwise.</li>
+<li><strong>Kyler Murray (Vikings) — concussion</strong> is trending the opposite direction: on track to clear protocol and start Week 3 vs. Tampa Bay, per Adam Schefter/team beat reporters. Carson Wentz reverts to backup once Murray is cleared.</li>
 </ul>
 
 <h2>🏥 INJURY UPDATES</h2>
@@ -544,102 +547,103 @@
 </tr>
 </tr></thead><tbody>
 <tr>
-<td>49ers</td><td>Brock Purdy</td><td>QB</td><td>Out</td><td>Ruled out Fri</td><td>⚠️ Major — backup QB starts vs. ARI</td>
+<td>CHI</td><td>Caleb Williams</td><td>QB</td><td>Out (carted)</td><td>New — hamstring</td><td>⚠️ Massive — Week 3 line moved ~3 pts toward PHI</td>
 </tr>
 <tr>
-<td>Rams</td><td>Puka Nacua</td><td>WR</td><td>DNP Fri (hip)</td><td>New</td><td>⚠️ WR1 availability TBD for MNF vs. NYG</td>
+<td>WAS</td><td>Jayden Daniels</td><td>QB</td><td>Out</td><td>New — dislocated elbow</td><td>⚠️ Season-altering; recurrence of prior injury</td>
 </tr>
 <tr>
-<td>Bengals</td><td>Joe Burrow</td><td>QB</td><td>Questionable (back)</td><td>FP Friday, trending to play</td><td>⚠️ Line likely already assumes he plays</td>
+<td>MIN</td><td>Kyler Murray</td><td>QB</td><td>Questionable → trending to clear</td><td>Improving — concussion protocol</td><td>⚠️ Expected back Week 3 vs. TB; monitor Wed practice status</td>
 </tr>
 <tr>
-<td>Texans</td><td>Nico Collins</td><td>WR</td><td>Out (hamstring)</td><td>Downgraded</td><td>WR1 out vs. CIN</td>
+<td>SF</td><td>Demarcus Robinson</td><td>WR</td><td>Carted off</td><td>New — apparent high-ankle sprain</td><td>Moderate — thins SF WR room further</td>
 </tr>
 <tr>
-<td>Raiders</td><td>Brock Bowers</td><td>TE</td><td>Doubtful (knee)</td><td>vs. Chargers</td><td>Removes top receiving TE</td>
+<td>ATL/CAR</td><td>Michael Penix Jr.</td><td>QB</td><td>Out</td><td>Knee</td><td>⚠️ Falcons game impact if starter remains sidelined</td>
 </tr>
 <tr>
-<td>Chargers</td><td>Ladd McConkey</td><td>WR</td><td>Questionable (rib)</td><td>vs. Raiders</td><td>Monitor pregame</td>
+<td>—</td><td>Billy Bowman Jr.</td><td>CB</td><td>Out</td><td>Achilles</td><td>Secondary depth concern</td>
 </tr>
 <tr>
-<td>Chiefs</td><td>Chris Jones</td><td>DT</td><td>Questionable (calf)</td><td>vs. Colts</td><td>Impacts pass rush prop/total</td>
+<td>—</td><td>Zay Flowers</td><td>WR</td><td>Out</td><td>Hamstring</td><td>⚠️ WR1-tier absence, target share shifts</td>
 </tr>
 <tr>
-<td>Jaguars</td><td>Tyson Campbell</td><td>CB</td><td>Questionable (ankle)</td><td>—</td><td>Secondary depth</td>
+<td>—</td><td>Nnamdi Madubuike</td><td>DT</td><td>Out</td><td>Neck</td><td>Front-7 rotation concern</td>
 </tr>
 <tr>
-<td>Bears</td><td>DJ Moore</td><td>WR</td><td>Doubtful/in doubt (AC joint sprain)</td><td>New</td><td>WR1 availability risk</td>
+<td>—</td><td>Teddye Buchanan</td><td>LB</td><td>Out</td><td>Knee</td><td>Depth</td>
 </tr>
 <tr>
-<td>Ravens</td><td>Nnamdi Madubuike</td><td>DT</td><td>Out (neck)</td><td>—</td><td>DL depth</td>
+<td>—</td><td>T.J. Tampa</td><td>CB</td><td>Out</td><td>Knee</td><td>Secondary depth</td>
 </tr>
 <tr>
-<td>Falcons</td><td>Michael Penix Jr.</td><td>QB</td><td>Out (ACL recovery)</td><td>Ongoing</td><td>Rush remains starter</td>
+<td>—</td><td>Chris Lindstrom</td><td>G</td><td>Questionable</td><td>Concussion</td><td>Watch protocol clearance</td>
 </tr>
 <tr>
-<td>Falcons</td><td>Cooper Rush</td><td>QB</td><td>Playing, managing back spasms</td><td>Ongoing</td><td>⚠️ Watch pregame report</td>
+<td>—</td><td>Divine Deablo</td><td>LB</td><td>Questionable</td><td>Illness</td><td>Game-time call</td>
 </tr>
 <tr>
-<td>Vikings</td><td>Jordan Mason</td><td>RB</td><td>To IR</td><td>New</td><td>Aaron Jones Sr. workload up</td>
+<td>—</td><td>A.J. Terrell</td><td>CB</td><td>Questionable</td><td>Shoulder</td><td>⚠️ CB1 — monitor practice reps</td>
 </tr>
 <tr>
-<td>Jets</td><td>Cooper</td><td>—</td><td>Expected to IR (ankle)</td><td>New</td><td>Per Rapoport</td>
+<td>—</td><td>Ronnie Stanley</td><td>OT</td><td>Questionable</td><td>Toe</td><td>⚠️ Blindside tackle — line impact if out</td>
 </tr>
 <tr>
-<td>Saints</td><td>Alvin Kamara</td><td>RB</td><td>Likely to return</td><td>Trending up</td><td>Boosts Saints run game</td>
+<td>—</td><td>John Simpson</td><td>G</td><td>Questionable</td><td>Groin</td><td>O-line depth</td>
 </tr>
 <tr>
-<td>Chiefs</td><td>Mansoor Delane</td><td>CB</td><td>Shoulder, no major damage</td><td>Real chance to play</td><td>Rookie CB depth</td>
+<td>CIN</td><td>Trey Hendrickson</td><td>OLB</td><td>Questionable</td><td>Finger</td><td>Edge-rush snap count risk</td>
 </tr>
 <tr>
-<td>Cardinals</td><td>Jeremiyah Love</td><td>RB</td><td>High ankle sprain</td><td>Committee backfield</td><td>Tyler Allgeier RB1 role</td>
+<td>KC</td><td>Patrick Mahomes/Harrison Butker</td><td>—</td><td>Played through, no new issues</td><td>Chiefs beat IND 33-30 in OT</td><td>Chiefs 2-0, no new injury flags</td>
+</tr>
+<tr>
+<td>SF</td><td>49ers WR corps</td><td>WR</td><td>Multiple banged up</td><td>Ongoing attrition</td><td>Passing-game efficiency risk vs. depth teams</td>
 </tr>
 </tbody></table>
 
+<p>Notes: several designations above are being carried over from the Week 2 official reports (Sun/Sept 20) since full Week 3 practice reports won't post until Wed/Thu. Re-verify Wednesday afternoon once Wed practice designations (DNP/LP/FP) are released — that's the sharpest signal of who actually plays.</p>
+
 <h3>NCAAF — Significant Injuries</h3>
 <ul>
-<li>Minnesota RB <strong>Darius Taylor</strong> ruled out (lower body) for today's game vs. Akron after a pregame medical warm-up.</li>
-<li>UNC DE <strong>Melkart Abou Jaoude</strong> (ACC's reigning sack leader) is out today vs. Clemson — meaningful for Tar Heels' pass rush in a ranked matchup.</li>
-<li>Kansas DB <strong>Ballard</strong> (shoulder) is out for the Jayhawks–Arizona State game in London (Big 12).</li>
+<li>Alabama RB <strong>AK Dear</strong> — out several weeks, lower-body injury; five-star freshman <strong>EJ Crowell</strong> limited with an undisclosed injury.</li>
+<li>South Carolina DB <strong>Kingsley Stewart</strong> — dealing with a back injury, described as "progressing" by HC Shane Beamer; game status TBD.</li>
+<li>No new Top-25 injury bombshells surfaced in today's scan; recommend a deeper Wed/Thu sweep once fall-camp overflow clears and Week 4 practice reports post.</li>
 </ul>
 
 <h2>📈 LINE MOVEMENT</h2>
 <ul>
-<li><strong>49ers–Cardinals:</strong> Line has shifted toward Arizona following confirmation Purdy is out — monitor total, which typically drops with a backup QB starting.</li>
-<li><strong>Rams–Giants (MNF):</strong> Watch closely into Saturday/Sunday — a Nacua scratch would likely move both the spread and total.</li>
-<li><strong>Bears–Eagles:</strong> Bears currently -1 vs. Eagles; DJ Moore's status is a swing factor worth tracking into Sunday.</li>
-<li><strong>Falcons–Packers (Thu opener already played):</strong> Historical note only — not actionable today.</li>
-<li>No confirmed 1.5+ point same-day moves were verifiable beyond the QB/WR-driven shifts above; full closing-line data wasn't accessible via search today — recommend cross-checking Covers.com/VegasInsider directly before placing bets.</li>
+<li><strong>PHI @ CHI (Week 3, MNF 9/28):</strong> Opened Bears -1.5 → now <strong>Eagles -4 to -4.5</strong> (~5-6 pt swing) directly on the Caleb Williams hamstring news. This is the single biggest mover in the league right now — line still has room to move further pending Chicago's backup QB confirmation.</li>
+<li><strong>LAR @ DEN (Week 3, SNF):</strong> Rams -2.5, total 45.5 — worth tracking since the Rams still have tonight's MNF Week 2 game vs. NYG to play first; short-week/travel fatigue could nudge this number.</li>
+<li><strong>CAR @ ATL (Week 2):</strong> Opened ATL -1.5, moved a full 4 points to <strong>Carolina -2.5</strong> — public and sharp money aligned (73% of tickets / 76% of money on Carolina), a rare case of consensus rather than a public-vs-sharp split.</li>
+<li><strong>LAR (home) vs. NYG — tonight's MNF (Week 2):</strong> Rams -7, total 47.5, NYG +245 / LAR -305 moneyline. Line has held steady into kickoff; no material sharp move reported.</li>
+<li>NCAAF Week 4 openers of note: <strong>Georgia -14 vs. Oklahoma</strong>, <strong>Texas -5.5 at Tennessee</strong>, <strong>Oregon/USC</strong> at 1.5 (highest total on the board at 62.5), <strong>Miami -42.5 vs. Central Michigan</strong> (largest spread), <strong>LSU -395 ML vs. Texas A&M (+310)</strong>, total 53.5.</li>
 </ul>
 
 <h2>🌤️ WEATHER WATCH</h2>
 <ul>
-<li><strong>MetLife Stadium (NYG/NYJ area):</strong> Partly cloudy, comfortable temps, light rain possible; moderate sideline-to-sideline wind — could affect passing/kicking.</li>
-<li><strong>Soldier Field (Chicago):</strong> Partly cloudy, chance of showers/thunderstorms (brief delay possible); moderate end-zone-to-end-zone wind.</li>
-<li><strong>Gillette Stadium (New England):</strong> Light rain possible Sunday; moderate diagonal wind — risk to passing/kicking accuracy.</li>
-<li><strong>Raymond James Stadium (Tampa Bay):</strong> ~86°F, 7% precip chance at 1pm ET; chance of showers/thunderstorms with possible delay.</li>
-<li>Flag all four for potential total/kicking-prop impact; re-check forecasts Sunday morning as they can shift close to kickoff.</li>
+<li>No stadium-specific wind/temp/precip numbers were confidently retrievable for this week's slate from today's scan — general forecasts referenced "showers/thunderstorms with moderate diagonal wind" possible for some Sunday afternoon outdoor games, which historically correlates with elevated turnover rates, but exact cities/kickoff times weren't confirmed.</li>
+<li>Action item: re-check RotoWire Weather and Football DB's stadium tracker Wed–Fri as Week 3 (and MNF Week 2 tonight at SoFi — a dome, no weather factor) forecasts firm up. Flag anything with wind >12 mph or temp <40°F once the 3-day-out window opens.</li>
 </ul>
 
 <h2>🏈 COLLEGE UPDATES</h2>
 <ul>
-<li>Full Saturday slate underway: No. 1 Texas vs. UTSA, No. 2 Georgia at Arkansas, No. 6 Ohio State vs. Kent State, No. 10 Alabama vs. Florida State, No. 12 USC at Rutgers, North Carolina at Clemson, No. 16 SMU at No. 23 Louisville, No. 22 Houston at No. 13 Texas Tech.</li>
-<li>Injuries above (Taylor, Abou Jaoude, Ballard) are the notable in-game absences affecting ranked matchups today.</li>
-<li>No major NCAAF line-movement data was verifiable for today's slate via search — recommend checking live in-game numbers directly at Covers/Action Network given several early kickoffs are already underway.</li>
+<li>Week 4 board is up with several marquee lines already posted (see Line Movement section) — Georgia-Oklahoma, Oregon-USC, and Texas-Tennessee are the headline sharp-money games to track as the week progresses.</li>
+<li>Injury situations at Alabama (RB AK Dear) and South Carolina (DB Kingsley Stewart) are the notable Top-25 items; nothing else rose to line-moving significance in today's scan.</li>
 </ul>
 
 <h2>✅ TODAY'S BETTING CHECKLIST</h2>
 <ul>
-<li>Confirm Puka Nacua's final Monday-night status before the Rams-Giants line settles — biggest lingering swing factor today.</li>
-<li>Track Joe Burrow's pregame warmup/final call — market seems to expect him to play, but back injuries carry late-scratch risk.</li>
-<li>Verify backup QB (Mac Jones or other) plan for 49ers and re-check the Cardinals line/total once announced.</li>
-<li>Monitor DJ Moore (Bears) final designation before Sunday's Bears-Eagles kickoff.</li>
-<li>Weather watch for MetLife, Soldier Field, Gillette, and Raymond James — re-check Sunday morning for wind/precip updates that could push unders.</li>
-<li>Re-verify all lines directly on Covers.com/VegasInsider before betting — several searches today returned cached/stale week data, so confirm current Week 3 numbers at the source.</li>
+<li><strong>Re-check Wednesday:</strong> Chicago's backup QB confirmation and first practice report — this is the key unlock for whether PHI -4/-4.5 is fair value or has more room to move toward Eagles.</li>
+<li><strong>Track Washington's Monday imaging results</strong> on Jayden Daniels — a confirmed multi-week timeline vs. a short absence changes the Commanders' next 2-3 lines materially.</li>
+<li><strong>Confirm Kyler Murray clears protocol</strong> by Wednesday/Thursday practice — if he's limited or held out again, Minnesota's Week 3 number vs. Tampa Bay should shift back toward Wentz-adjusted pricing.</li>
+<li><strong>Watch A.J. Terrell (CB, questionable/shoulder) and Ronnie Stanley (OT, questionable/toe)</strong> practice participation — both are starter-tier and their status could move their respective spreads 1+ points by Friday.</li>
+<li><strong>Monitor tonight's LAR-NYG MNF result</strong> for any effect on the Rams' short-week SNF number vs. Denver next week (travel/fatigue angle).</li>
+<li>Revisit stadium weather trackers once the 3-day-out window opens for Week 3 outdoor games — nothing actionable yet.</li>
 </ul>
 
 <hr>
-<p><em>Daily report: 2026-09-19</em></p>
+<p><em>Daily report: 2026-09-21 08:08 CT</em></p>
 
 <!-- INTEL_CONTENT_END -->
   </div>
@@ -649,7 +653,7 @@
 <div class="sport-panel" id="panel-weekly">
   <div class="intel-wrap weekly-wrap">
     <!-- WEEKLY_INTEL_CONTENT_START -->
-<div class="intel-meta">Report date: <strong>2026-08-24</strong> &nbsp;·&nbsp; Updated: September 19, 2026 at 07:00 PM</div><h1>NFL + NCAAF Weekly Intel Report — 2026-08-24</h1>
+<div class="intel-meta">Report date: <strong>2026-08-24</strong> &nbsp;·&nbsp; Updated: September 21, 2026 at 09:30 AM</div><h1>NFL + NCAAF Weekly Intel Report — 2026-08-24</h1>
 
 <h2>🏥 INJURY REPORT</h2>
 
@@ -779,117 +783,78 @@
 // ════════════════════════════
 // DATA
 // ════════════════════════════
+// NFL_DATA_START
+
 const NFL = [
-  {date:"2026-09-10",time:"Thu",matchup:"NE Patriots @ Seattle Seahawks",spread_line:-4.2,total_line:44.5,ats_pick:"New England Patriots +4.2",ats_conf_num:86.4,ats_kelly_num:17.9,ats_edge:"YES",tot_pick:"UNDER 44.5",tot_conf:"62.9%"},
-  {date:"2026-09-11",time:"Fri",matchup:"SF 49ers @ LA Rams",spread_line:-3.3,total_line:48.8,ats_pick:"San Francisco 49ers +3.3",ats_conf_num:80.7,ats_kelly_num:14.9,ats_edge:"YES",tot_pick:"UNDER 48.8",tot_conf:"51.1%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Washington @ Philadelphia Eagles",spread_line:-4.8,total_line:47.2,ats_pick:"Washington Commanders +4.8",ats_conf_num:58.1,ats_kelly_num:3.0,ats_edge:"YES",tot_pick:"UNDER 47.2",tot_conf:"57.8%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Miami Dolphins @ Las Vegas Raiders",spread_line:-3.3,total_line:40.8,ats_pick:"Miami Dolphins +3.3",ats_conf_num:78.5,ats_kelly_num:13.7,ats_edge:"YES",tot_pick:"OVER 40.8",tot_conf:"51.0%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Arizona Cardinals @ LA Chargers",spread_line:-10.8,total_line:46.2,ats_pick:"Arizona Cardinals +10.8",ats_conf_num:79.8,ats_kelly_num:14.4,ats_edge:"YES",tot_pick:"UNDER 46.2",tot_conf:"66.3%"},
-  {date:"2026-09-13",time:"Sun",matchup:"NY Jets @ Tennessee Titans",spread_line:-2.7,total_line:38.8,ats_pick:"New York Jets +2.7",ats_conf_num:80.2,ats_kelly_num:14.6,ats_edge:"YES",tot_pick:"OVER 38.8",tot_conf:"52.6%"},
-  {date:"2026-09-13",time:"Sun",matchup:"New Orleans Saints @ Detroit Lions",spread_line:-7.0,total_line:48.8,ats_pick:"New Orleans Saints +7.0",ats_conf_num:85.9,ats_kelly_num:17.6,ats_edge:"YES",tot_pick:"UNDER 48.8",tot_conf:"51.1%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Green Bay Packers @ Minnesota Vikings",spread_line:1.5,total_line:45.2,ats_pick:"Minnesota Vikings +1.5",ats_conf_num:58.0,ats_kelly_num:2.9,ats_edge:"YES",tot_pick:"OVER 45.2",tot_conf:"52.5%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Tampa Bay Buccaneers @ Cincinnati Bengals",spread_line:-3.5,total_line:51.2,ats_pick:"Tampa Bay Buccaneers +3.5",ats_conf_num:74.9,ats_kelly_num:11.8,ats_edge:"YES",tot_pick:"OVER 51.2",tot_conf:"53.4%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Chicago Bears @ Carolina Panthers",spread_line:2.5,total_line:45.2,ats_pick:"Carolina Panthers +2.5",ats_conf_num:57.6,ats_kelly_num:2.7,ats_edge:"YES",tot_pick:"UNDER 45.2",tot_conf:"50.6%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Buffalo Bills @ Houston Texans",spread_line:1.5,total_line:44.8,ats_pick:"Houston Texans +1.5",ats_conf_num:52.5,ats_kelly_num:0.1,ats_edge:"",tot_pick:"UNDER 44.8",tot_conf:"60.0%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Baltimore Ravens @ Indianapolis Colts",spread_line:3.5,total_line:48.8,ats_pick:"Indianapolis Colts +3.5",ats_conf_num:76.2,ats_kelly_num:12.5,ats_edge:"YES",tot_pick:"UNDER 48.8",tot_conf:"57.2%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Atlanta Falcons @ Pittsburgh Steelers",spread_line:-2.8,total_line:41.8,ats_pick:"Atlanta Falcons +2.8",ats_conf_num:62.6,ats_kelly_num:5.4,ats_edge:"YES",tot_pick:"UNDER 41.8",tot_conf:"55.9%"},
-  {date:"2026-09-13",time:"Sun",matchup:"Cleveland Browns @ Jacksonville Jaguars",spread_line:-7.5,total_line:40.5,ats_pick:"Cleveland Browns +7.5",ats_conf_num:76.3,ats_kelly_num:12.5,ats_edge:"YES",tot_pick:"OVER 40.5",tot_conf:"53.8%"},
-  {date:"2026-09-14",time:"Mon",matchup:"Dallas Cowboys @ New York Giants",spread_line:2.2,total_line:48.2,ats_pick:"New York Giants +2.2",ats_conf_num:59.8,ats_kelly_num:3.9,ats_edge:"YES",tot_pick:"UNDER 48.2",tot_conf:"54.3%"},
-  {date:"2026-09-15",time:"Tue",matchup:"Denver Broncos @ Kansas City Chiefs",spread_line:-2.7,total_line:42.8,ats_pick:"Denver Broncos +2.7",ats_conf_num:82.1,ats_kelly_num:15.6,ats_edge:"YES",tot_pick:"OVER 42.8",tot_conf:"58.3%"},
-  {date:"2026-09-18",time:"Fri",matchup:"Detroit Lions @ Buffalo Bills",spread_line:-3.0,total_line:52.5,ats_pick:"Detroit Lions +3.0",ats_conf_num:84.6,ats_kelly_num:16.9,ats_edge:"YES",tot_pick:"OVER 52.5",tot_conf:"53.1%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Jacksonville Jaguars @ Denver Broncos",spread_line:-3.0,total_line:43.5,ats_pick:"Jacksonville Jaguars +3.0",ats_conf_num:73.2,ats_kelly_num:10.9,ats_edge:"YES",tot_pick:"OVER 43.5",tot_conf:"50.2%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Miami Dolphins @ San Francisco 49ers",spread_line:-10.5,total_line:46.5,ats_pick:"Miami Dolphins +10.5",ats_conf_num:93.2,ats_kelly_num:21.4,ats_edge:"YES",tot_pick:"UNDER 46.5",tot_conf:"51.1%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Washington Commanders @ Dallas Cowboys",spread_line:-4.5,total_line:51.5,ats_pick:"Washington Commanders +4.5",ats_conf_num:81.0,ats_kelly_num:15.0,ats_edge:"YES",tot_pick:"UNDER 51.5",tot_conf:"55.1%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Seattle Seahawks @ Arizona Cardinals",spread_line:10.0,total_line:44.5,ats_pick:"Arizona Cardinals +10.0",ats_conf_num:78.1,ats_kelly_num:13.5,ats_edge:"YES",tot_pick:"UNDER 44.5",tot_conf:"64.3%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Las Vegas Raiders @ LA Chargers",spread_line:-8.5,total_line:42.5,ats_pick:"Las Vegas Raiders +8.5",ats_conf_num:90.0,ats_kelly_num:19.8,ats_edge:"YES",tot_pick:"OVER 42.5",tot_conf:"61.6%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Philadelphia Eagles @ Tennessee Titans",spread_line:4.5,total_line:42.5,ats_pick:"Tennessee Titans +4.5",ats_conf_num:82.3,ats_kelly_num:15.7,ats_edge:"YES",tot_pick:"UNDER 42.5",tot_conf:"51.1%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Minnesota Vikings @ Chicago Bears",spread_line:-3.5,total_line:45.5,ats_pick:"Minnesota Vikings +3.5",ats_conf_num:71.7,ats_kelly_num:10.2,ats_edge:"YES",tot_pick:"OVER 45.5",tot_conf:"51.4%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Green Bay Packers @ New York Jets",spread_line:6.5,total_line:42.5,ats_pick:"New York Jets +6.5",ats_conf_num:72.6,ats_kelly_num:10.6,ats_edge:"YES",tot_pick:"OVER 42.5",tot_conf:"50.1%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Cleveland Browns @ Tampa Bay Buccaneers",spread_line:-6.5,total_line:42.5,ats_pick:"Cleveland Browns +6.5",ats_conf_num:87.3,ats_kelly_num:18.3,ats_edge:"YES",tot_pick:"OVER 42.5",tot_conf:"53.9%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Cincinnati Bengals @ Houston Texans",spread_line:-2.5,total_line:46.5,ats_pick:"Cincinnati Bengals +2.5",ats_conf_num:51.3,ats_kelly_num:0,ats_edge:"",tot_pick:"UNDER 46.5",tot_conf:"58.4%"},
-  {date:"2026-09-20",time:"Sun",matchup:"New Orleans Saints @ Baltimore Ravens",spread_line:-7.5,total_line:46.5,ats_pick:"New Orleans Saints +7.5",ats_conf_num:89.9,ats_kelly_num:19.7,ats_edge:"YES",tot_pick:"UNDER 46.5",tot_conf:"50.4%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Carolina Panthers @ Atlanta Falcons",spread_line:-1.5,total_line:43.5,ats_pick:"Carolina Panthers +1.5",ats_conf_num:63.5,ats_kelly_num:5.8,ats_edge:"YES",tot_pick:"OVER 43.5",tot_conf:"51.0%"},
-  {date:"2026-09-20",time:"Sun",matchup:"Pittsburgh Steelers @ NE Patriots",spread_line:-4.5,total_line:43.5,ats_pick:"Pittsburgh Steelers +4.5",ats_conf_num:87.9,ats_kelly_num:18.6,ats_edge:"YES",tot_pick:"OVER 43.5",tot_conf:"56.2%"},
-  {date:"2026-09-21",time:"Mon",matchup:"Indianapolis Colts @ Kansas City Chiefs",spread_line:-5.5,total_line:47.5,ats_pick:"Indianapolis Colts +5.5",ats_conf_num:80.3,ats_kelly_num:14.7,ats_edge:"YES",tot_pick:"OVER 47.5",tot_conf:"52.5%"},
-  {date:"2026-09-22",time:"Tue",matchup:"NY Giants @ LA Rams",spread_line:-9.5,total_line:47.5,ats_pick:"New York Giants +9.5",ats_conf_num:95.0,ats_kelly_num:22.4,ats_edge:"YES",tot_pick:"UNDER 47.5",tot_conf:"59.7%"},
-  {date:"2026-09-25",time:"Fri",matchup:"Atlanta Falcons @ Green Bay Packers",spread_line:-7.5,total_line:46.5,ats_pick:"Atlanta Falcons +7.5",ats_conf_num:92.7,ats_kelly_num:21.2,ats_edge:"YES",tot_pick:"UNDER 46.5",tot_conf:"54.4%"},
-  {date:"2026-09-27",time:"Sun",matchup:"Seattle Seahawks @ Washington Commanders",spread_line:3.5,total_line:46.5,ats_pick:"Washington Commanders +3.5",ats_conf_num:70.3,ats_kelly_num:9.4,ats_edge:"YES",tot_pick:"OVER 46.5",tot_conf:"52.8%"},
-  {date:"2026-09-27",time:"Sun",matchup:"Las Vegas Raiders @ New Orleans Saints",spread_line:-3.0,total_line:42.5,ats_pick:"Las Vegas Raiders +3.0",ats_conf_num:72.9,ats_kelly_num:10.8,ats_edge:"YES",tot_pick:"OVER 42.5",tot_conf:"55.0%"},
-  {date:"2026-09-27",time:"Sun",matchup:"Baltimore Ravens @ Dallas Cowboys",spread_line:2.5,total_line:51.0,ats_pick:"Dallas Cowboys +2.5",ats_conf_num:56.6,ats_kelly_num:2.2,ats_edge:"YES",tot_pick:"UNDER 51.0",tot_conf:"56.7%"},
-  {date:"2026-09-27",time:"Sun",matchup:"Minnesota Vikings @ Tampa Bay Buccaneers",spread_line:-1.5,total_line:44.5,ats_pick:"Minnesota Vikings +1.5",ats_conf_num:72.3,ats_kelly_num:10.4,ats_edge:"YES",tot_pick:"OVER 44.5",tot_conf:"61.3%"},
-  {date:"2026-09-27",time:"Sun",matchup:"Arizona Cardinals @ SF 49ers",spread_line:-11.5,total_line:46.5,ats_pick:"Arizona Cardinals +11.5",ats_conf_num:90.4,ats_kelly_num:20.0,ats_edge:"YES",tot_pick:"OVER 46.5",tot_conf:"53.3%"},
-  {date:"2026-09-27",time:"Sun",matchup:"Tennessee Titans @ New York Giants",spread_line:-3.0,total_line:45.5,ats_pick:"Tennessee Titans +3.0",ats_conf_num:73.5,ats_kelly_num:11.1,ats_edge:"YES",tot_pick:"OVER 45.5",tot_conf:"53.3%"},
-  {date:"2026-09-27",time:"Sun",matchup:"NE Patriots @ Jacksonville Jaguars",spread_line:-1.5,total_line:45.5,ats_pick:"New England Patriots +1.5",ats_conf_num:69.0,ats_kelly_num:8.7,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"62.4%"},
-  {date:"2026-09-27",time:"Sun",matchup:"NY Jets @ Detroit Lions",spread_line:-9.5,total_line:45.5,ats_pick:"New York Jets +9.5",ats_conf_num:89.7,ats_kelly_num:19.6,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"66.4%"},
-  {date:"2026-09-27",time:"Sun",matchup:"Carolina Panthers @ Cleveland Browns",spread_line:2.5,total_line:40.5,ats_pick:"Cleveland Browns +2.5",ats_conf_num:65.7,ats_kelly_num:7.0,ats_edge:"YES",tot_pick:"OVER 40.5",tot_conf:"59.8%"},
-  {date:"2026-09-27",time:"Sun",matchup:"LA Chargers @ Buffalo Bills",spread_line:-2.5,total_line:48.5,ats_pick:"Los Angeles Chargers +2.5",ats_conf_num:71.7,ats_kelly_num:10.1,ats_edge:"YES",tot_pick:"UNDER 48.5",tot_conf:"52.9%"},
-  {date:"2026-09-27",time:"Sun",matchup:"Kansas City Chiefs @ Miami Dolphins",spread_line:7.0,total_line:44.5,ats_pick:"Miami Dolphins +7.0",ats_conf_num:90.6,ats_kelly_num:20.1,ats_edge:"YES",tot_pick:"UNDER 44.5",tot_conf:"52.3%"},
-  {date:"2026-09-28",time:"Mon",matchup:"LA Rams @ Denver Broncos",spread_line:3.0,total_line:45.5,ats_pick:"Denver Broncos +3.0",ats_conf_num:53.0,ats_kelly_num:0.3,ats_edge:"",tot_pick:"OVER 45.5",tot_conf:"52.6%"},
-  {date:"2026-09-29",time:"Tue",matchup:"Philadelphia Eagles @ Chicago Bears",spread_line:-1.5,total_line:46.5,ats_pick:"Philadelphia Eagles +1.5",ats_conf_num:62.4,ats_kelly_num:5.2,ats_edge:"YES",tot_pick:"OVER 46.5",tot_conf:"58.6%"},
-  {date:"2026-10-02",time:"Fri",matchup:"Pittsburgh Steelers @ Cleveland Browns",spread_line:3.0,total_line:41.5,ats_pick:"Cleveland Browns +3.0",ats_conf_num:67.3,ats_kelly_num:7.8,ats_edge:"YES",tot_pick:"OVER 41.5",tot_conf:"57.2%"},
-  {date:"2026-10-04",time:"Sun",matchup:"LA Chargers @ Seattle Seahawks",spread_line:-3.0,total_line:45.5,ats_pick:"Los Angeles Chargers +3.0",ats_conf_num:77.7,ats_kelly_num:13.3,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"63.9%"},
-  {date:"2026-10-04",time:"Sun",matchup:"Kansas City Chiefs @ Las Vegas Raiders",spread_line:5.5,total_line:43.5,ats_pick:"Las Vegas Raiders +5.5",ats_conf_num:73.0,ats_kelly_num:10.8,ats_edge:"YES",tot_pick:"OVER 43.5",tot_conf:"59.3%"},
-  {date:"2026-10-04",time:"Sun",matchup:"Denver Broncos @ SF 49ers",spread_line:-2.5,total_line:46.5,ats_pick:"Denver Broncos +2.5",ats_conf_num:72.9,ats_kelly_num:10.8,ats_edge:"YES",tot_pick:"OVER 46.5",tot_conf:"55.5%"},
-  {date:"2026-10-04",time:"Sun",matchup:"Miami Dolphins @ Minnesota Vikings",spread_line:-7.5,total_line:43.5,ats_pick:"Miami Dolphins +7.5",ats_conf_num:84.8,ats_kelly_num:17.0,ats_edge:"YES",tot_pick:"UNDER 43.5",tot_conf:"51.7%"},
-  {date:"2026-10-04",time:"Sun",matchup:"Dallas Cowboys @ Houston Texans",spread_line:-2.5,total_line:47.5,ats_pick:"Dallas Cowboys +2.5",ats_conf_num:69.1,ats_kelly_num:8.8,ats_edge:"YES",tot_pick:"UNDER 47.5",tot_conf:"51.1%"},
-  {date:"2026-10-04",time:"Sun",matchup:"LA Rams @ Philadelphia Eagles",spread_line:2.5,total_line:47.5,ats_pick:"Philadelphia Eagles +2.5",ats_conf_num:65.8,ats_kelly_num:7.0,ats_edge:"YES",tot_pick:"OVER 47.5",tot_conf:"56.0%"},
-  {date:"2026-10-04",time:"Sun",matchup:"NY Jets @ Chicago Bears",spread_line:-8.5,total_line:45.5,ats_pick:"New York Jets +8.5",ats_conf_num:86.1,ats_kelly_num:17.7,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"62.0%"},
-  {date:"2026-10-04",time:"Sun",matchup:"NE Patriots @ Buffalo Bills",spread_line:-3.0,total_line:49.5,ats_pick:"New England Patriots +3.0",ats_conf_num:81.1,ats_kelly_num:15.1,ats_edge:"YES",tot_pick:"OVER 49.5",tot_conf:"51.4%"},
-  {date:"2026-10-04",time:"Sun",matchup:"Tennessee Titans @ Baltimore Ravens",spread_line:-8.5,total_line:47.5,ats_pick:"Tennessee Titans +8.5",ats_conf_num:86.8,ats_kelly_num:18.0,ats_edge:"YES",tot_pick:"UNDER 47.5",tot_conf:"50.0%"},
-  {date:"2026-10-04",time:"Sun",matchup:"Arizona Cardinals @ NY Giants",spread_line:-7.0,total_line:45.5,ats_pick:"Arizona Cardinals +7.0",ats_conf_num:92.8,ats_kelly_num:21.2,ats_edge:"YES",tot_pick:"OVER 45.5",tot_conf:"55.2%"},
-  {date:"2026-10-04",time:"Sun",matchup:"Indianapolis Colts @ Washington Commanders",spread_line:-1.5,total_line:49.2,ats_pick:"Indianapolis Colts +1.5",ats_conf_num:66.6,ats_kelly_num:7.4,ats_edge:"YES",tot_pick:"OVER 49.2",tot_conf:"50.3%"},
-  {date:"2026-10-04",time:"Sun",matchup:"Jacksonville Jaguars @ Cincinnati Bengals",spread_line:-2.5,total_line:51.5,ats_pick:"Jacksonville Jaguars +2.5",ats_conf_num:66.9,ats_kelly_num:7.6,ats_edge:"YES",tot_pick:"OVER 51.5",tot_conf:"62.3%"},
-  {date:"2026-10-05",time:"Mon",matchup:"Detroit Lions @ Carolina Panthers",spread_line:3.0,total_line:47.5,ats_pick:"Carolina Panthers +3.0",ats_conf_num:80.5,ats_kelly_num:14.7,ats_edge:"YES",tot_pick:"OVER 47.5",tot_conf:"57.2%"},
-  {date:"2026-10-06",time:"Tue",matchup:"Atlanta Falcons @ New Orleans Saints",spread_line:-2.5,total_line:45.5,ats_pick:"Atlanta Falcons +2.5",ats_conf_num:54.9,ats_kelly_num:1.3,ats_edge:"YES",tot_pick:"UNDER 45.5",tot_conf:"57.5%"},
-  {date:"2026-10-09",time:"Fri",matchup:"Tampa Bay Buccaneers @ Dallas Cowboys",spread_line:-3.5,total_line:52.5,ats_pick:"Tampa Bay Buccaneers +3.5",ats_conf_num:84.9,ats_kelly_num:17.1,ats_edge:"YES",tot_pick:"UNDER 52.5",tot_conf:"53.7%"},
-  {date:"2026-10-11",time:"Sun",matchup:"NY Giants @ Washington Commanders",spread_line:-2.5,total_line:48.5,ats_pick:"New York Giants +2.5",ats_conf_num:67.0,ats_kelly_num:7.7,ats_edge:"YES",tot_pick:"OVER 48.5",tot_conf:"56.6%"},
-  {date:"2026-10-11",time:"Sun",matchup:"Las Vegas Raiders @ NE Patriots",spread_line:-8.5,total_line:44.5,ats_pick:"Las Vegas Raiders +8.5",ats_conf_num:83.7,ats_kelly_num:16.5,ats_edge:"YES",tot_pick:"UNDER 44.5",tot_conf:"50.8%"},
-  {date:"2026-10-11",time:"Sun",matchup:"Indianapolis Colts @ Pittsburgh Steelers",spread_line:-2.5,total_line:47.5,ats_pick:"Indianapolis Colts +2.5",ats_conf_num:60.2,ats_kelly_num:4.1,ats_edge:"YES",tot_pick:"UNDER 47.5",tot_conf:"51.3%"},
-  {date:"2026-10-11",time:"Sun",matchup:"Cleveland Browns @ NY Jets",spread_line:-2.5,total_line:40.5,ats_pick:"Cleveland Browns +2.5",ats_conf_num:70.8,ats_kelly_num:9.7,ats_edge:"YES",tot_pick:"UNDER 40.5",tot_conf:"60.3%"},
-  {date:"2026-10-11",time:"Sun",matchup:"Cincinnati Bengals @ Miami Dolphins",spread_line:5.5,total_line:49.5,ats_pick:"Miami Dolphins +5.5",ats_conf_num:85.8,ats_kelly_num:17.6,ats_edge:"YES",tot_pick:"UNDER 49.5",tot_conf:"55.9%"},
-  {date:"2026-10-11",time:"Sun",matchup:"Denver Broncos @ LA Chargers",spread_line:-2.5,total_line:44.5,ats_pick:"Denver Broncos +2.5",ats_conf_num:59.8,ats_kelly_num:3.9,ats_edge:"YES",tot_pick:"OVER 44.5",tot_conf:"54.4%"},
-  {date:"2026-10-11",time:"Sun",matchup:"SF 49ers @ Seattle Seahawks",spread_line:-3.5,total_line:48.5,ats_pick:"San Francisco 49ers +3.5",ats_conf_num:70.2,ats_kelly_num:9.4,ats_edge:"YES",tot_pick:"OVER 48.5",tot_conf:"58.9%"},
+  {date:"2026-09-20",time:"Sun 17:00 UTC",matchup:"Carolina Panthers @ Atlanta Falcons",spread_line:2.5,total_line:43.5,ats_pick:"Carolina Panthers -2.5",ats_conf_num:50.4,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 43.5",tot_conf:"50.2%"},
+  {date:"2026-09-20",time:"Sun 17:00 UTC",matchup:"New Orleans Saints @ Baltimore Ravens",spread_line:-8.5,total_line:46.5,ats_pick:"New Orleans Saints +8.5",ats_conf_num:52.3,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 46.5",tot_conf:"50.1%"},
+  {date:"2026-09-20",time:"Sun 17:00 UTC",matchup:"Minnesota Vikings @ Chicago Bears",spread_line:-4.5,total_line:47.7,ats_pick:"Minnesota Vikings +4.5",ats_conf_num:51.4,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 47.7",tot_conf:"52.7%"},
+  {date:"2026-09-20",time:"Sun 17:00 UTC",matchup:"Cincinnati Bengals @ Houston Texans",spread_line:-2.5,total_line:45.5,ats_pick:"Cincinnati Bengals +2.5",ats_conf_num:51.3,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 45.5",tot_conf:"50.6%"},
+  {date:"2026-09-20",time:"Sun 17:00 UTC",matchup:"Cleveland Browns @ Tampa Bay Buccaneers",spread_line:-8.7,total_line:41.5,ats_pick:"Cleveland Browns +8.7",ats_conf_num:51.5,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 41.5",tot_conf:"56.3%"},
+  {date:"2026-09-20",time:"Sun 17:00 UTC",matchup:"Green Bay Packers @ New York Jets",spread_line:3.5,total_line:44.5,ats_pick:"New York Jets +3.5",ats_conf_num:50.8,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 44.5",tot_conf:"64.7%"},
+  {date:"2026-09-20",time:"Sun 17:00 UTC",matchup:"Pittsburgh Steelers @ New England Patriots",spread_line:-5.0,total_line:41.5,ats_pick:"Pittsburgh Steelers +5.0",ats_conf_num:50.1,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 41.5",tot_conf:"50.4%"},
+  {date:"2026-09-20",time:"Sun 17:00 UTC",matchup:"Philadelphia Eagles @ Tennessee Titans",spread_line:7.0,total_line:39.5,ats_pick:"Philadelphia Eagles -7.0",ats_conf_num:63.9,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 39.5",tot_conf:"51.8%"},
+  {date:"2026-09-20",time:"Sun 20:05 UTC",matchup:"Jacksonville Jaguars @ Denver Broncos",spread_line:-2.7,total_line:45.5,ats_pick:"Jacksonville Jaguars +2.7",ats_conf_num:52.1,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 45.5",tot_conf:"50.1%"},
+  {date:"2026-09-20",time:"Sun 20:05 UTC",matchup:"Las Vegas Raiders @ Los Angeles Chargers",spread_line:-6.5,total_line:43.5,ats_pick:"Los Angeles Chargers -6.5",ats_conf_num:50.0,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 43.5",tot_conf:"52.6%"},
+  {date:"2026-09-20",time:"Sun 20:25 UTC",matchup:"Seattle Seahawks @ Arizona Cardinals",spread_line:4.0,total_line:41.0,ats_pick:"Seattle Seahawks -4.0",ats_conf_num:64.9,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 41.0",tot_conf:"51.1%"},
+  {date:"2026-09-20",time:"Sun 20:25 UTC",matchup:"Washington Commanders @ Dallas Cowboys",spread_line:-4.0,total_line:50.5,ats_pick:"Washington Commanders +4.0",ats_conf_num:53.3,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 50.5",tot_conf:"55.7%"},
+  {date:"2026-09-20",time:"Sun 20:25 UTC",matchup:"Miami Dolphins @ San Francisco 49ers",spread_line:-13.5,total_line:45.0,ats_pick:"Miami Dolphins +13.5",ats_conf_num:54.7,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 45.0",tot_conf:"51.6%"},
+  {date:"2026-09-21",time:"Mon 00:20 UTC",matchup:"Indianapolis Colts @ Kansas City Chiefs",spread_line:-6.2,total_line:46.5,ats_pick:"Indianapolis Colts +6.2",ats_conf_num:52.0,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 46.5",tot_conf:"54.9%"},
+  {date:"2026-09-22",time:"Tue 00:15 UTC",matchup:"New York Giants @ Los Angeles Rams",spread_line:-7.2,total_line:47.7,ats_pick:"Los Angeles Rams -7.2",ats_conf_num:53.0,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 47.7",tot_conf:"56.0%"},
+  {date:"2026-09-25",time:"Fri 00:15 UTC",matchup:"Atlanta Falcons @ Green Bay Packers",spread_line:-6.0,total_line:46.0,ats_pick:"Atlanta Falcons +6.0",ats_conf_num:51.2,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 46.0",tot_conf:"51.9%"},
+  {date:"2026-09-27",time:"Sun 17:00 UTC",matchup:"Carolina Panthers @ Cleveland Browns",spread_line:2.8,total_line:40.0,ats_pick:"Cleveland Browns +2.8",ats_conf_num:50.0,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 40.0",tot_conf:"53.0%"},
+  {date:"2026-09-27",time:"Sun 17:00 UTC",matchup:"Cincinnati Bengals @ Pittsburgh Steelers",spread_line:2.5,total_line:46.0,ats_pick:"Cincinnati Bengals -2.5",ats_conf_num:51.2,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 46.0",tot_conf:"51.1%"},
+  {date:"2026-09-27",time:"Sun 17:00 UTC",matchup:"Houston Texans @ Indianapolis Colts",spread_line:2.5,total_line:45.0,ats_pick:"Houston Texans -2.5",ats_conf_num:55.7,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 45.0",tot_conf:"51.4%"},
+  {date:"2026-09-27",time:"Sun 17:00 UTC",matchup:"New England Patriots @ Jacksonville Jaguars",spread_line:-2.0,total_line:46.0,ats_pick:"New England Patriots +2.0",ats_conf_num:50.0,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 46.0",tot_conf:"51.2%"},
+  {date:"2026-09-27",time:"Sun 17:00 UTC",matchup:"Kansas City Chiefs @ Miami Dolphins",spread_line:8.5,total_line:44.5,ats_pick:"Kansas City Chiefs -8.5",ats_conf_num:50.9,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 44.5",tot_conf:"54.2%"},
+  {date:"2026-09-27",time:"Sun 17:00 UTC",matchup:"Tennessee Titans @ New York Giants",spread_line:-5.5,total_line:43.0,ats_pick:"New York Giants -5.5",ats_conf_num:51.5,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 43.0",tot_conf:"60.5%"},
+  {date:"2026-09-27",time:"Sun 17:00 UTC",matchup:"Seattle Seahawks @ Washington Commanders",spread_line:2.0,total_line:42.0,ats_pick:"Washington Commanders +2.0",ats_conf_num:52.0,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 42.0",tot_conf:"54.6%"},
+  {date:"2026-09-27",time:"Sun 20:05 UTC",matchup:"Arizona Cardinals @ San Francisco 49ers",spread_line:-8.5,total_line:48.0,ats_pick:"Arizona Cardinals +8.5",ats_conf_num:57.3,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 48.0",tot_conf:"59.8%"},
+  {date:"2026-09-27",time:"Sun 20:05 UTC",matchup:"Minnesota Vikings @ Tampa Bay Buccaneers",spread_line:-1.5,total_line:46.0,ats_pick:"Tampa Bay Buccaneers -1.5",ats_conf_num:50.5,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 46.0",tot_conf:"52.1%"},
+  {date:"2026-09-27",time:"Sun 20:25 UTC",matchup:"Baltimore Ravens @ Dallas Cowboys",spread_line:3.2,total_line:52.5,ats_pick:"Baltimore Ravens -3.2",ats_conf_num:56.0,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 52.5",tot_conf:"53.3%"},
+  {date:"2026-09-27",time:"Sun 20:25 UTC",matchup:"Las Vegas Raiders @ New Orleans Saints",spread_line:-3.0,total_line:45.0,ats_pick:"Las Vegas Raiders +3.0",ats_conf_num:52.7,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 45.0",tot_conf:"65.8%"},
+  {date:"2026-09-28",time:"Mon 00:20 UTC",matchup:"Los Angeles Rams @ Denver Broncos",spread_line:2.5,total_line:46.5,ats_pick:"Los Angeles Rams -2.5",ats_conf_num:54.3,ats_kelly_num:0.0,ats_edge:"",tot_pick:"OVER 46.5",tot_conf:"52.0%"},
+  {date:"2026-09-29",time:"Tue 00:15 UTC",matchup:"Philadelphia Eagles @ Chicago Bears",spread_line:-1.5,total_line:48.0,ats_pick:"Philadelphia Eagles +1.5",ats_conf_num:51.3,ats_kelly_num:0.0,ats_edge:"",tot_pick:"UNDER 48.0",tot_conf:"51.4%"}
 ];
+// NFL_DATA_END
+
+// NCAAF_DATA_START
 
 const NCAAF = [
-  {date:"2026-08-29",matchup:"Clemson @ Georgia",spread_line:-8.5,pred_margin:8.8,ats_pick:"Georgia -8.5",ats_conf_num:62.1,ats_kelly_num:5.3,ats_edge:"YES"},
-  {date:"2026-08-29",matchup:"Texas @ Ohio State",spread_line:-4.5,pred_margin:6.6,ats_pick:"Ohio State -4.5",ats_conf_num:63.2,ats_kelly_num:5.9,ats_edge:"YES"},
-  {date:"2026-08-29",matchup:"Florida State @ Notre Dame",spread_line:-10.5,pred_margin:21.7,ats_pick:"Notre Dame -10.5",ats_conf_num:86.6,ats_kelly_num:18.0,ats_edge:"YES"},
-  {date:"2026-09-05",matchup:"Michigan @ Alabama",spread_line:-7.5,pred_margin:9.9,ats_pick:"Alabama -7.5",ats_conf_num:71.9,ats_kelly_num:10.2,ats_edge:"YES"},
-  {date:"2026-09-05",matchup:"Penn State @ Oregon",spread_line:-3.5,pred_margin:1.3,ats_pick:"Oregon -3.5",ats_conf_num:52.1,ats_kelly_num:0,ats_edge:""},
-  {date:"2026-09-05",matchup:"Oklahoma @ Tennessee",spread_line:-2.5,pred_margin:13.0,ats_pick:"Tennessee -2.5",ats_conf_num:78.3,ats_kelly_num:13.5,ats_edge:"YES"},
-  {date:"2026-09-05",matchup:"USC @ LSU",spread_line:-2.5,pred_margin:3.5,ats_pick:"LSU -2.5",ats_conf_num:61.0,ats_kelly_num:4.6,ats_edge:"YES"},
-  {date:"2026-09-05",matchup:"Texas A&M @ Miami",spread_line:3.5,pred_margin:3.8,ats_pick:"Miami +3.5",ats_conf_num:75.9,ats_kelly_num:12.2,ats_edge:"YES"},
-  {date:"2026-09-05",matchup:"Michigan State @ Indiana",spread_line:-5.5,pred_margin:17.5,ats_pick:"Indiana -5.5",ats_conf_num:89.7,ats_kelly_num:19.6,ats_edge:"YES"},
-  {date:"2026-09-12",matchup:"Ole Miss @ Georgia",spread_line:-8.0,pred_margin:-4.2,ats_pick:"Ole Miss +8.0",ats_conf_num:70.9,ats_kelly_num:9.7,ats_edge:"YES"},
-  {date:"2026-09-12",matchup:"Michigan State @ Ohio State",spread_line:-16.5,pred_margin:19.5,ats_pick:"Ohio State -16.5",ats_conf_num:88.9,ats_kelly_num:19.2,ats_edge:"YES"},
-  {date:"2026-09-12",matchup:"Vanderbilt @ Alabama",spread_line:-22.5,pred_margin:22.0,ats_pick:"Vanderbilt +22.5",ats_conf_num:52.7,ats_kelly_num:0.2,ats_edge:""},
-  {date:"2026-09-12",matchup:"Illinois @ Oregon",spread_line:-13.5,pred_margin:10.0,ats_pick:"Oregon -13.5",ats_conf_num:62.0,ats_kelly_num:5.1,ats_edge:"YES"},
-  {date:"2026-09-12",matchup:"Arkansas @ Tennessee",spread_line:-7.5,pred_margin:8.8,ats_pick:"Tennessee -7.5",ats_conf_num:57.0,ats_kelly_num:2.5,ats_edge:"YES"},
-  {date:"2026-09-12",matchup:"Mississippi State @ LSU",spread_line:-11.5,pred_margin:6.7,ats_pick:"LSU -11.5",ats_conf_num:74.3,ats_kelly_num:11.2,ats_edge:"YES"},
-  {date:"2026-09-12",matchup:"Baylor @ Texas",spread_line:-11.5,pred_margin:11.1,ats_pick:"Texas -11.5",ats_conf_num:65.4,ats_kelly_num:6.8,ats_edge:"YES"},
-  {date:"2026-09-12",matchup:"Virginia @ Notre Dame",spread_line:-18.5,pred_margin:21.5,ats_pick:"Notre Dame -18.5",ats_conf_num:76.8,ats_kelly_num:12.9,ats_edge:"YES"},
-  {date:"2026-09-12",matchup:"Nebraska @ Indiana",spread_line:-4.5,pred_margin:14.7,ats_pick:"Indiana -4.5",ats_conf_num:78.2,ats_kelly_num:13.5,ats_edge:"YES"},
-  {date:"2026-09-12",matchup:"Kansas State @ SMU",spread_line:-3.5,pred_margin:2.7,ats_pick:"SMU -3.5",ats_conf_num:57.0,ats_kelly_num:2.5,ats_edge:"YES"},
-  {date:"2026-09-19",matchup:"Auburn @ Georgia",spread_line:-8.5,pred_margin:8.3,ats_pick:"Georgia -8.5",ats_conf_num:70.5,ats_kelly_num:9.5,ats_edge:"YES"},
-  {date:"2026-09-19",matchup:"Northwestern @ Ohio State",spread_line:-20.5,pred_margin:28.3,ats_pick:"Ohio State -20.5",ats_conf_num:88.2,ats_kelly_num:18.9,ats_edge:"YES"},
-  {date:"2026-09-19",matchup:"Georgia Tech @ Alabama",spread_line:-18.5,pred_margin:14.6,ats_pick:"Alabama -18.5",ats_conf_num:64.9,ats_kelly_num:6.6,ats_edge:"YES"},
-  {date:"2026-09-19",matchup:"Michigan @ Oregon",spread_line:-4.5,pred_margin:14.7,ats_pick:"Oregon -4.5",ats_conf_num:79.5,ats_kelly_num:14.4,ats_edge:"YES"},
-  {date:"2026-09-19",matchup:"Miami @ Notre Dame",spread_line:-4.5,pred_margin:2.1,ats_pick:"Notre Dame -4.5",ats_conf_num:51.6,ats_kelly_num:0,ats_edge:""},
-  {date:"2026-09-19",matchup:"Texas A&M @ Tennessee",spread_line:1.5,pred_margin:4.6,ats_pick:"Tennessee +1.5",ats_conf_num:72.6,ats_kelly_num:10.6,ats_edge:"YES"},
-  {date:"2026-09-19",matchup:"Florida @ LSU",spread_line:-3.5,pred_margin:1.9,ats_pick:"LSU -3.5",ats_conf_num:53.8,ats_kelly_num:0.7,ats_edge:""},
-  {date:"2026-09-19",matchup:"Oklahoma @ Texas",spread_line:-2.5,pred_margin:6.6,ats_pick:"Texas -2.5",ats_conf_num:81.6,ats_kelly_num:15.4,ats_edge:"YES"},
-  {date:"2026-09-26",matchup:"Tennessee @ Georgia",spread_line:-5.5,pred_margin:0.4,ats_pick:"Tennessee +5.5",ats_conf_num:51.0,ats_kelly_num:0,ats_edge:""},
-  {date:"2026-09-26",matchup:"Penn State @ Ohio State",spread_line:-5.5,pred_margin:6.1,ats_pick:"Ohio State -5.5",ats_conf_num:59.5,ats_kelly_num:3.7,ats_edge:"YES"},
-  {date:"2026-09-26",matchup:"Arkansas @ Alabama",spread_line:-14.5,pred_margin:10.2,ats_pick:"Alabama -14.5",ats_conf_num:53.7,ats_kelly_num:0.7,ats_edge:""},
-  {date:"2026-09-26",matchup:"Wisconsin @ Oregon",spread_line:-11.5,pred_margin:14.7,ats_pick:"Oregon -11.5",ats_conf_num:79.5,ats_kelly_num:14.4,ats_edge:"YES"},
-  {date:"2026-09-26",matchup:"Florida State @ Notre Dame",spread_line:-6.5,pred_margin:21.7,ats_pick:"Notre Dame -6.5",ats_conf_num:90.9,ats_kelly_num:20.3,ats_edge:"YES"},
-  {date:"2026-09-26",matchup:"Florida @ Miami",spread_line:-3.5,pred_margin:6.5,ats_pick:"Miami -3.5",ats_conf_num:67.2,ats_kelly_num:7.7,ats_edge:"YES"},
-  {date:"2026-10-03",matchup:"Missouri @ Georgia",spread_line:-9.5,pred_margin:9.4,ats_pick:"Georgia -9.5",ats_conf_num:57.9,ats_kelly_num:2.9,ats_edge:"YES"},
-  {date:"2026-10-03",matchup:"Nebraska @ Ohio State",spread_line:-15.5,pred_margin:19.5,ats_pick:"Ohio State -15.5",ats_conf_num:76.7,ats_kelly_num:12.8,ats_edge:"YES"},
-  {date:"2026-10-03",matchup:"Kentucky @ Alabama",spread_line:-13.5,pred_margin:11.5,ats_pick:"Alabama -13.5",ats_conf_num:68.9,ats_kelly_num:8.5,ats_edge:"YES"},
-  {date:"2026-10-03",matchup:"Oklahoma State @ Texas",spread_line:-11.5,pred_margin:11.1,ats_pick:"Texas -11.5",ats_conf_num:84.8,ats_kelly_num:17.0,ats_edge:"YES"},
+  {date:"2026-09-19",matchup:"Florida State Seminoles @ Alabama Crimson Tide",spread_line:-12.5,pred_margin:21.9,ats_pick:"Alabama Crimson Tide -12.5",ats_conf_num:50.6,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Mississippi State Bulldogs @ South Carolina Gamecocks",spread_line:2.5,pred_margin:7.2,ats_pick:"South Carolina Gamecocks +2.5",ats_conf_num:50.6,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Florida International Panthers @ Florida Atlantic Owls",spread_line:-7.5,pred_margin:-5.9,ats_pick:"Florida International Panthers +7.5",ats_conf_num:50.8,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"East Carolina Pirates @ Old Dominion Monarchs",spread_line:-7.5,pred_margin:-14.8,ats_pick:"East Carolina Pirates +7.5",ats_conf_num:51.3,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Marshall Thundering Herd @ Missouri State Bears",spread_line:7.5,pred_margin:-5.9,ats_pick:"Missouri State Bears +7.5",ats_conf_num:50.1,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Georgia State Panthers @ UCF Knights",spread_line:-19.5,pred_margin:15.5,ats_pick:"Georgia State Panthers +19.5",ats_conf_num:50.2,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Western Michigan Broncos @ Rice Owls",spread_line:8.2,pred_margin:-14.2,ats_pick:"Western Michigan Broncos -8.2",ats_conf_num:50.4,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"UConn Huskies @ Southern Mississippi Golden Eagles",spread_line:14.5,pred_margin:0.9,ats_pick:"Southern Mississippi Golden Eagles +14.5",ats_conf_num:50.9,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Nevada Wolf Pack @ Middle Tennessee Blue Raiders",spread_line:6.5,pred_margin:-11.3,ats_pick:"Nevada Wolf Pack -6.5",ats_conf_num:50.3,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Troy Trojans @ Missouri Tigers",spread_line:-13.2,pred_margin:20.2,ats_pick:"Missouri Tigers -13.2",ats_conf_num:50.4,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Georgia Southern Eagles @ Jacksonville State Gamecocks",spread_line:6.5,pred_margin:2.2,ats_pick:"Jacksonville State Gamecocks +6.5",ats_conf_num:50.5,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Ohio Bobcats @ South Alabama Jaguars",spread_line:-12.5,pred_margin:2.4,ats_pick:"Ohio Bobcats +12.5",ats_conf_num:50.6,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Florida Gators @ Auburn Tigers",spread_line:6.5,pred_margin:-2.3,ats_pick:"Auburn Tigers +6.5",ats_conf_num:50.2,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Virginia Cavaliers @ West Virginia Mountaineers",spread_line:11.2,pred_margin:-12.0,ats_pick:"Virginia Cavaliers -11.2",ats_conf_num:50.0,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Colorado Buffaloes @ Northwestern Wildcats",spread_line:-3.5,pred_margin:4.1,ats_pick:"Northwestern Wildcats -3.5",ats_conf_num:50.0,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"New Mexico Lobos @ Oklahoma Sooners",spread_line:-17.5,pred_margin:24.9,ats_pick:"Oklahoma Sooners -17.5",ats_conf_num:50.4,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Michigan State Spartans @ Notre Dame Fighting Irish",spread_line:-30.8,pred_margin:32.6,ats_pick:"Notre Dame Fighting Irish -30.8",ats_conf_num:50.1,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Virginia Tech Hokies @ Maryland Terrapins",spread_line:6.2,pred_margin:3.2,ats_pick:"Maryland Terrapins +6.2",ats_conf_num:50.6,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"Kennesaw State Owls @ Tennessee Volunteers",spread_line:-34.5,pred_margin:34.4,ats_pick:"Kennesaw State Owls +34.5",ats_conf_num:50.0,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-19",matchup:"LSU Tigers @ Ole Miss Rebels",spread_line:3.2,pred_margin:2.1,ats_pick:"Ole Miss Rebels +3.2",ats_conf_num:50.3,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-20",matchup:"Charlotte 49ers @ Appalachian State Mountaineers",spread_line:-16.3,pred_margin:15.4,ats_pick:"Charlotte 49ers +16.3",ats_conf_num:50.1,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-20",matchup:"Arkansas State Red Wolves @ TCU Horned Frogs",spread_line:-19.0,pred_margin:14.8,ats_pick:"Arkansas State Red Wolves +19.0",ats_conf_num:50.2,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-20",matchup:"UTSA Roadrunners @ Texas Longhorns",spread_line:-29.7,pred_margin:25.9,ats_pick:"UTSA Roadrunners +29.7",ats_conf_num:50.2,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-20",matchup:"UAB Blazers @ Louisiana Ragin Cajuns",spread_line:-6.8,pred_margin:3.0,ats_pick:"UAB Blazers +6.8",ats_conf_num:50.2,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-20",matchup:"BYU Cougars @ Colorado State Rams",spread_line:17.5,pred_margin:-11.6,ats_pick:"Colorado State Rams +17.5",ats_conf_num:50.3,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-20",matchup:"James Madison Dukes @ San Diego State Aztecs",spread_line:-2.0,pred_margin:-7.0,ats_pick:"James Madison Dukes +2.0",ats_conf_num:50.5,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-20",matchup:"Northern Illinois Huskies @ Arizona Wildcats",spread_line:-34.3,pred_margin:22.9,ats_pick:"Northern Illinois Huskies +34.3",ats_conf_num:50.7,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-20",matchup:"Purdue Boilermakers @ UCLA Bruins",spread_line:-13.8,pred_margin:9.4,ats_pick:"Purdue Boilermakers +13.8",ats_conf_num:50.3,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-26",matchup:"Illinois Fighting Illini @ Ohio State Buckeyes",spread_line:-27.0,pred_margin:27.2,ats_pick:"Ohio State Buckeyes -27.0",ats_conf_num:50.0,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-26",matchup:"Iowa Hawkeyes @ Michigan Wolverines",spread_line:-4.5,pred_margin:-7.7,ats_pick:"Iowa Hawkeyes +4.5",ats_conf_num:50.7,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-26",matchup:"Wisconsin Badgers @ Penn State Nittany Lions",spread_line:-11.5,pred_margin:19.9,ats_pick:"Penn State Nittany Lions -11.5",ats_conf_num:50.5,ats_kelly_num:0.0,ats_edge:""},
+  {date:"2026-09-26",matchup:"Oregon Ducks @ USC Trojans",spread_line:-1.5,pred_margin:0.9,ats_pick:"Oregon Ducks +1.5",ats_conf_num:50.0,ats_kelly_num:0.0,ats_edge:""}
 ];
+// NCAAF_DATA_END
 
 // ════════════════════════════
 // MODAL STORE

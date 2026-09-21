@@ -1,6 +1,9 @@
 """
 push_to_github.py
 ==================
+0. Refreshes the NFL/NCAAF picks tables + summary stats in picks_dashboard.html
+   from the current picks_latest.csv / picks_ncaaf_latest.csv / metrics.json
+   (see generate_dashboard.py)
 1. Finds the latest daily intel report in intel_reports/
 2. Converts it to HTML and injects it into picks_dashboard.html's Intel tab
 3. Copies picks_dashboard.html → index.html
@@ -16,6 +19,7 @@ One-time setup:
 
 import os, re, subprocess, shutil, glob, sys
 from datetime import datetime
+import generate_dashboard
 
 # When run from run_daily_push.bat, stdout is redirected to push_log.txt and
 # defaults to cp1252 on Windows — which crashes on the ✓/⚠ characters below.
@@ -262,6 +266,16 @@ def main():
     print("  GitHub Pages push — NLF-NCAA-Betting-Model-")
     print("=" * 56)
 
+    # 0. Refresh the picks tables + summary stats from the current CSVs/metrics
+    # (FIX 2026-09-20: this was missing entirely — the daily push only ever
+    # refreshed the Intel tab, so the picks tables stayed frozen on whatever
+    # snapshot was baked in when the dashboard was first built. See
+    # generate_dashboard.py's docstring for the full story.)
+    try:
+        generate_dashboard.main()
+    except Exception as e:
+        print(f"⚠ Dashboard data refresh failed: {e} — continuing with whatever picks_dashboard.html already has")
+
     # 1. Find and inject latest daily intel report
     report_path = find_latest_report("daily_intel_")
     if report_path:
@@ -300,6 +314,7 @@ def main():
     git("add", "index.html")
     git("add", "picks_dashboard.html")
     git("add", os.path.join("intel_reports", "."))   # all intel reports
+    git("add", "generate_dashboard.py")  # keep this script's own fixes committed too
     git("add", "push_to_github.py")  # keep this script's own fixes committed —
     # an unstaged edit here blocked `pull --rebase` every run and forced a
     # daily force-push (see push_log.txt entries before 2026-08-26)
