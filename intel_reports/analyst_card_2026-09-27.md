@@ -206,14 +206,14 @@ Board: LAR -2.5 / 44.5 · Nacua DOUBTFUL
 
 ### PHI @ CHI — MNF Mon 8:15 PM
 
-Board: PHI -3.5 / 41.5 · Williams OUT; Bagent (Q) or Keenum, game-time decision
+Board: PHI -3.5 / 41.5 · Keenum confirmed starter (Bagent backup) · Book: PHI -3.5 / 42
 
 - **W3-17 · spread · CHI +3.5** — Tier C · model 51.3% · price -117 [qb-change;key-number;line-move]  
-  Williams officially OUT (chicagobears.com 9/26); starter is a game-time call between Bagent (cleared to practice, still in protocol, questionable) and Keenum -- either way a backup, so the thesis doesn't depend on which one. Model had PHI +1.5 (9/19, pre-injury) so its number is void. Line swung 5 points (CHI -1.5 open to +3.5) through 3. PHI is banged up too: Goedert likely out (MCL), DeVonta Smith DNP Thu, Barkley limited. Same backup-QB-dog test as WAS +7.5 (W3-09). C. BOOK REMAP 9/27: Book CHI +3.5 -117: same number, heavier juice. Stays C.
+  Williams officially OUT (chicagobears.com 9/26); starter is a game-time call between Bagent (cleared to practice, still in protocol, questionable) and Keenum -- either way a backup, so the thesis doesn't depend on which one. Model had PHI +1.5 (9/19, pre-injury) so its number is void. Line swung 5 points (CHI -1.5 open to +3.5) through 3. PHI is banged up too: Goedert likely out (MCL), DeVonta Smith DNP Thu, Barkley limited. Same backup-QB-dog test as WAS +7.5 (W3-09). C. MON 6:12 PM ET UPDATE: Keenum confirmed starter (NFL Network/ESPN), Bagent backup. But PHI got healthier than assumed: Barkley and DeVonta Smith have no designation and play; only Goedert, Hollywood Brown, T Fred Johnson OUT, EDGE Greenard questionable. Half the 'PHI banged up' leg is gone; the number (+3.5) is unchanged. Stays C, now the weakest spread on the card. BOOK REMAP 9/27: Book CHI +3.5 -117: same number, heavier juice. Stays C.
 - **W3-T5 · team_total · CHI team total UNDER 19** — Tier C [derived;consistent-expression;qb-change]  
-  Implied: PHI (41.5+3.5)/2=22.5, CHI (41.5-3.5)/2=19. Backup QB (neither Bagent nor Keenum has started since 2023) vs Fangio defense; Keenum is 3-0 vs Fangio as a starter, the main counter. Consistent with a tight, low-scoring game alongside CHI +3.5. C.
+  Implied: PHI (41.5+3.5)/2=22.5, CHI (41.5-3.5)/2=19. Backup QB (neither Bagent nor Keenum has started since 2023) vs Fangio defense; Keenum is 3-0 vs Fangio as a starter, the main counter. Consistent with a tight, low-scoring game alongside CHI +3.5. C. MON 6:12 PM ET UPDATE: Keenum confirmed (no game since 2023, only CHI QB to practice all week). Barkley playing lets PHI shorten the game. Thesis intact -- now the stronger of the two CHI rows. Stays C.
 - **W3-X13 · total · PASS (Under model)** — Tier PASS · model 51.4% [qb-change;line-move]  
-  Model Under 48.0 (9/19) predates the Williams injury; board has already dropped 6.5 to 41.5 on the backup-QB news and PHI's own injuries. Nothing left in the number. No clear signal.
+  Model Under 48.0 (9/19) predates the Williams injury; board has already dropped 6.5 to 41.5 on the backup-QB news and PHI's own injuries. Nothing left in the number. No clear signal. MON 6:12 PM ET UPDATE: Book 42; the 6.5-point drop already prices Keenum. Still no clear signal.
 
 ---
 *Lines from the Covers.com Week 3 odds table (Kalshi board, 'lines as of 9-27') at build time; prices from the user's book screenshot where shown, otherwise TBD (Kalshi shows contract %, not American odds). Team totals are implied: favorite = (total + |spread|)/2, dog = (total − |spread|)/2. 1H spreads graded against half the closing full-game spread. Prop prices are Kalshi contract % from the Covers anytime-TD page (9/26 8:22 PM ET).*
