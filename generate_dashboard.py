@@ -119,6 +119,21 @@ def weighted(metrics, section, key):
     return val, n
 
 
+def _fmt_header_date(dt):
+    """Cross-platform 'Month D, YYYY · H:MM AM/PM' (no leading zeros).
+    FIX 2026-10-03: the old code used strftime("%-d ... %-I ...") -- the
+    '-' no-padding flag is a glibc/macOS extension. On Windows (the actual
+    production host this runs on via Task Scheduler) it raises
+    ValueError: Invalid format string, which push_to_github.py was silently
+    catching and swallowing every single day since 2026-09-21 -- so the
+    picks tables never actually refreshed despite the job "succeeding"
+    every morning. Build the string manually instead so it works on any
+    platform."""
+    month = dt.strftime("%B")
+    hour12 = dt.hour % 12 or 12
+    return f"{month} {dt.day}, {dt.year} · {hour12}:{dt.strftime('%M %p')}"
+
+
 def main():
     print("=" * 60)
     print("  DASHBOARD GENERATOR (picks tables + summary stats)")
@@ -151,7 +166,7 @@ def main():
         if "generated" in df.columns and len(df):
             gen_times += list(pd.to_datetime(df["generated"], errors="coerce").dropna())
     gen_dt = max(gen_times) if gen_times else datetime.now()
-    html = replace_marker(html, "HEADER_GENERATED", "Generated " + gen_dt.strftime("%B %-d, %Y · %-I:%M %p"))
+    html = replace_marker(html, "HEADER_GENERATED", "Generated " + _fmt_header_date(gen_dt))
 
     n_nfl_train = n_ncaaf_train = None
     try:
