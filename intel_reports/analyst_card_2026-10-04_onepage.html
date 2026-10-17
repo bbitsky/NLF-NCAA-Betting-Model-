@@ -1,0 +1,159 @@
+<title>Week 4 Winners Card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: summary strip, then one row per game in kickoff order, grouped by window. Same-team games get a filled row and a SAME TEAM tag; splits get an amber tag. */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --fg:#17201b; --mut:#5d6a63; --line:#d9dfdb;
+  --turf:#1d6b46; --turf-soft:#e3f1ea; --turf-ink:#0f4a2e;
+  --miss:#b3261e; --split:#a85d00; --split-soft:#fbeed9;
+  --chip:#ebefed;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1512; --surface:#18201c; --fg:#e8eeea; --mut:#9aa8a0; --line:#2a352f;
+  --turf:#4cc58a; --turf-soft:#173126; --turf-ink:#bff0d6;
+  --miss:#ff8a80; --split:#f0a54a; --split-soft:#33260f; --chip:#222c27; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1512; --surface:#18201c; --fg:#e8eeea; --mut:#9aa8a0; --line:#2a352f;
+  --turf:#4cc58a; --turf-soft:#173126; --turf-ink:#bff0d6;
+  --miss:#ff8a80; --split:#f0a54a; --split-soft:#33260f; --chip:#222c27; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;padding-inline:16px;padding-block:20px 40px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1{font-family:var(--display);font-size:clamp(30px,6vw,44px);line-height:1;margin:0;letter-spacing:.01em;text-wrap:balance}
+.sub{color:var(--mut);margin:6px 0 0;max-width:68ch}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.strip div{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0}
+.strip b{display:block;font-family:var(--display);font-size:28px;line-height:1.05;font-variant-numeric:tabular-nums}
+.strip span{color:var(--mut);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--mut)}
+.tag{display:inline-block;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:3px;white-space:nowrap}
+.tag.same{background:var(--turf);color:#fff}
+:root[data-theme="dark"] .tag.same{color:#06150d}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag.same{color:#06150d}}
+.tag.split{background:var(--split-soft);color:var(--split);border:1px solid var(--split)}
+.win{margin-top:6px}
+.win h2{font-family:var(--display);font-size:20px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:10px 0 6px;font-weight:600}
+.head,.row{display:grid;grid-template-columns:minmax(150px,1.35fr) minmax(130px,1fr) minmax(130px,1fr) minmax(110px,.8fr) minmax(110px,.9fr);gap:6px 14px;align-items:start}
+.head{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);padding:0 12px 4px}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-bottom:6px}
+.row.same{background:var(--turf-soft);border-color:var(--turf)}
+.row>div{min-width:0}
+.game{font-family:var(--display);font-size:22px;font-weight:700;line-height:1.1}
+.game small{display:block;font-family:var(--body);font-weight:500;font-size:12px;color:var(--mut);margin-top:2px}
+.k{display:none;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+.big{font-weight:600;font-variant-numeric:tabular-nums}
+.pct{color:var(--mut);font-size:13px;font-variant-numeric:tabular-nums}
+.same .pct,.same .small{color:var(--turf-ink)}
+.small{font-size:13px;color:var(--mut)}
+.extras{grid-column:1/-1;border-top:1px dashed var(--line);padding-top:6px;font-size:13px;display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:2px}
+.same .extras{border-color:var(--turf)}
+.chip{background:var(--chip);border-radius:3px;padding:1px 7px}
+.same .chip{background:var(--surface)}
+.note{font-size:13px;color:var(--mut);max-width:80ch}
+.note p{margin:0 0 6px}
+.res{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center;font-size:14px;margin-top:2px}
+.res .lab{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+.res label{display:inline-flex;gap:7px;align-items:center;cursor:pointer;min-height:30px;font-weight:600}
+.res input{width:20px;height:20px;accent-color:var(--turf);margin:0;cursor:pointer}
+.res input:focus-visible{outline:2px solid var(--turf);outline-offset:2px}
+.out{font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:15px}
+.out.hit{color:var(--turf)} .out.miss{color:var(--miss)}
+.same .out.hit{color:var(--turf-ink)}
+button.reset{font:inherit;font-size:12px;background:var(--chip);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:3px 10px;cursor:pointer;margin-top:6px}
+@media (max-width:720px){
+  .head{display:none}
+  .row{grid-template-columns:1fr 1fr}
+  .row>.game{grid-column:1/-1}
+  .k{display:block}
+}
+</style>
+<div class="wrap">
+  <header>
+    <h1>Week 4 Winners Card</h1>
+    <p class="sub">Sunday, October 4, 2026. Straight-up winner, spread pick, first-half side and projected score for every game, in kickoff order. Book lines are from the screenshots sent 10/4 at about 9:05 AM ET.</p>
+  </header>
+
+  <div class="strip" aria-label="Summary">
+    <div><b>12 of 15</b><span>games where the straight-up winner and the spread pick are the same team</span></div>
+    <div><b>3 splits</b><span>IND/WAS, CHI/NYJ, MIN/MIA: one team wins, the other covers</span></div>
+    <div><b id="tally">0 of 15</b><span>games with a winner marked. The boxes only record what happened; they do not score the picks.</span></div>
+    <div><b>TNF final</b><span>CLE 27, PIT 24. The soft PIT lean lost.</span></div>
+  </div>
+
+  <div class="legend">
+    <span><span class="tag same">Same team</span> wins and covers</span>
+    <span><span class="tag split">Split</span> winner and spread pick differ</span>
+    <span>Win % = book moneyline, juice removed</span>
+  </div>
+
+  <div id="games"></div>
+
+  <section class="note">
+    <p><b>How to read it.</b> The winner column ignores the spread. The spread pick says who covers the book number. First-half side is the straight-up winner on the book's 1H spread, except where that spread is 7 or more (BAL, MIN), where I take the 1H dog because a 7-point halftime lead is rare.</p>
+    <p><b>Scores.</b> Projected scores come from the book's total and spread, shaped to match the picks. They are not output from a separate scoring model.</p>
+    <p><b>Gaps.</b> The model file has no independent edge this week (all entries 50%), so win probabilities track the market, adjusted for confirmed QB and injury news. CIN is -149 (supplied by user), JAX +129. Team-total prices are implied from the book spread and total, not real book numbers, except TEN Under 15.5 (-125).</p>
+    <p><b>Open items.</b> DAL@HOU: if game-day rain is 80% or more, or wind 15 mph or more, Under 49 (-115) becomes a lean. DET -3.5 at -115 was dropped as a bet but stays the spread pick here. Check inactives before kickoff: McLaurin (WAS), Evans (SF), McConkey (LAC).</p>
+  </section>
+</div>
+<script>
+var G=[
+["9:30 AM ET · London","IND @ WAS","IND",67,"-230","WAS +5","(-110)",false,"IND -3 (-120)","IND 25, WAS 22",["Mariota starts for WAS, Daniels out","Total 46.5: no pick"]],
+["1:00 PM ET","NE @ BUF","BUF",74,"-335","BUF -7","(-105)",true,"BUF -4 (-115)","BUF 29, NE 20",[]],
+["1:00 PM ET","NYJ @ CHI","CHI",64,"-193","NYJ +3.5","(-107)",false,"CHI -2.5 (-120)","CHI 22, NYJ 20",["Under 43 (-105)","CHI team total Under 23.25 (implied)","Bagent starts for CHI"]],
+["1:00 PM ET","ARI @ NYG","ARI",57,"-142","ARI -2.5","(-113)",true,"ARI -0.5 (-115)","ARI 24, NYG 21",["Near coin flip"]],
+["1:00 PM ET","DAL @ HOU","HOU",58,"-152","HOU -3","(-105)",true,"HOU -1.5 (-110)","HOU 27, DAL 22",["Watch: Under 49 (-115) if rain is confirmed"]],
+["1:00 PM ET","JAX @ CIN","CIN",58,"-149","CIN -2.5","(-120)",true,"CIN -0.5 (-115)","CIN 28, JAX 24",["CIN team total Over 26.5 (-140)","JAX team total Under 24.5 (-120)","Lean, not a lock"]],
+["1:00 PM ET","GB @ TB","GB",60,"-164","GB -3","(-115)",true,"GB -2.5 (-103)","GB 22, TB 17",["TB team total Under 18 (implied)","1H Under 19.5 (-105)","TB starts rookie Jalon Daniels"]],
+["1:00 PM ET","LAR @ PHI","LAR",63,"-185","LAR -3.5","(-106)",true,"LAR -2.5 (-110)","LAR 23, PHI 19",["PHI WRs Smith and Brown out"]],
+["1:00 PM ET","TEN @ BAL","BAL",85,"-760","BAL -11.5","(-110)",true,"TEN +7 (-115)","BAL 27, TEN 15",["TEN team total Under 15.5 (-125)"]],
+["4:05 PM ET","MIA @ MIN","MIN",83,"-630","MIA +10","(-115)",false,"MIA +6.5 (-107)","MIN 22, MIA 16",["1H Under 19.5 (+100)","Jefferson out (MIN), Achane out (MIA)"]],
+["4:25 PM ET","KC @ LV","KC",67,"-230","KC -4.5","(-115)",true,"KC -3 (-115)","KC 27, LV 21",["Brock Bowers anytime TD (34% Kalshi)"]],
+["4:25 PM ET","LAC @ SEA","SEA",74,"-340","SEA -7","(-115)",true,"SEA -4 (-105)","SEA 25, LAC 17",["AJ Barner anytime TD (26% Kalshi)"]],
+["4:25 PM ET","DEN @ SF","SF",57,"-145","SF -2.5","(-117)",true,"SF -1.5 (-110)","SF 26, DEN 23",["Least safe favorite: Bosa out, Evans game-time"]],
+["8:20 PM ET · Sunday night","DET @ CAR","DET",65,"-205","DET -3.5","(-115)",true,"DET -2.5 (-120)","DET 28, CAR 23",["CAR missing WR Legette, G Lewis, two CBs"]],
+["8:15 PM ET · Monday night","ATL @ NO","NO",53,"-123","NO -1","(-122)",true,"NO -0.5 (-110)","NO 25, ATL 23",["True coin flip, slight lean only"]]
+];
+var TOT=[46.5,49,43,44.5,49,52,39,42.5,42.5,38,48.5,48,42.5,51,48];
+var out="",last="",open=false;
+function res(g,i){var t=g[1].split(" @ ");
+  return '<div class="res"><span class="lab">Who won?</span>'
+   +'<label><input type="checkbox" data-g="'+i+'" data-t="'+t[0]+'"> '+t[0]+'</label>'
+   +'<label><input type="checkbox" data-g="'+i+'" data-t="'+t[1]+'"> '+t[1]+'</label>'
+   +'</div>'
+   +'<div class="res"><span class="lab">Total '+TOT[i]+'</span>'
+   +'<label><input type="checkbox" data-gt="'+i+'" data-t="Over"> Over</label>'
+   +'<label><input type="checkbox" data-gt="'+i+'" data-t="Under"> Under</label>'
+   +'</div>';}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+G.forEach(function(g,i){
+  var win=g[0].indexOf("9:30")==0?"Early":(g[0].indexOf("1:00")==0?"1:00 PM ET":(g[0].indexOf("4:")==0?"Late afternoon":(g[0].indexOf("Sunday")>-1?"Sunday night":"Monday night")));
+  if(win!==last){ if(open) out+="</div>"; out+='<div class="win"><h2>'+win+'</h2>'+(win==="Early"?'<div class="head"><div>Game</div><div>Wins straight up</div><div>Spread pick</div><div>1H side</div><div>Projected score</div></div>':''); last=win; open=true;}
+  var cls=g[7]?"row same":"row";
+  out+='<div class="'+cls+'"><div class="game">'+esc(g[1])+'<small>'+esc(g[0])+'</small></div>'
+   +'<div><span class="k">Wins straight up</span><span class="big">'+esc(g[2])+'</span> <span class="pct">'+g[3]+'% · '+esc(g[4])+'</span></div>'
+   +'<div><span class="k">Spread pick</span><span class="big">'+esc(g[5])+'</span> <span class="small">'+esc(g[6])+'</span><br><span class="tag '+(g[7]?"same":"split")+'">'+(g[7]?"Same team":"Split")+'</span></div>'
+   +'<div><span class="k">1H side</span><span class="big">'+esc(g[8])+'</span></div>'
+   +'<div><span class="k">Projected</span><span class="big">'+esc(g[9])+'</span></div>'
+   +(g[10].length?'<div class="extras">'+g[10].map(function(x){return '<span class="chip">'+esc(x)+'</span>'}).join("")+'</div>':'')
+   +res(g,i)
+   +'</div>';
+});
+if(open) out+="</div>";
+document.getElementById("games").innerHTML=out+'<button class="reset" id="reset" type="button">Clear all checkboxes</button>';
+var KEY="wk4_winners_2026",state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){state={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function paint(){var n=0;
+  G.forEach(function(g,i){var w=state[i];if(w)n++;
+    document.querySelectorAll('input[data-g="'+i+'"]').forEach(function(c){c.checked=(c.getAttribute("data-t")===w)});
+    var t=state["t"+i];
+    document.querySelectorAll('input[data-gt="'+i+'"]').forEach(function(c){c.checked=(c.getAttribute("data-t")===t)});});
+  document.getElementById("tally").textContent=n+" of 15";}
+document.querySelectorAll('input[data-g]').forEach(function(c){c.addEventListener("change",function(){
+  var i=c.getAttribute("data-g");if(c.checked){state[i]=c.getAttribute("data-t")}else{delete state[i]}save();paint();});});
+document.querySelectorAll('input[data-gt]').forEach(function(c){c.addEventListener("change",function(){
+  var i=c.getAttribute("data-gt");if(c.checked){state["t"+i]=c.getAttribute("data-t")}else{delete state["t"+i]}save();paint();});});
+document.getElementById("reset").addEventListener("click",function(){state={};save();paint();});
+paint();
+</script>

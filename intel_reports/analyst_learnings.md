@@ -6,6 +6,7 @@ Sections: Process rules (how we build the card), Pattern log (what the results a
 ## Process rules (confirmed)
 
 - **Never quote a line from a search-snippet summary.** 2026-09-13: four numbers were wrong (ARI +11.5 → real +9.5; DAL -1.5 → -2.5; NYJ +3 → +1.5; CLE +7 → +9.5). Fetch the Covers week-odds table or the user's book screenshot.
+- **Judge SU winner picks at the real moneyline, not -110.** (Added 2026-10-13.) Week 4 SU went 9-6 but about -2.2u at the user's prices. Report SU/FP in their own buckets with real-price units.
 - **Re-check QB status the morning of.** Falcons went Penix → Tua → Cooper Rush in six days. The daily intel run at 1 AM can be stale by kickoff.
 - **The model's ledger lags.** picks_ledger.csv rows were from 9/6 for a 9/13 slate. Model confidence is a prior; the current number vs the model's entry number is the edge.
 - **Key numbers dominate the .ag mapping.** Saints +7 vs +6.5, Ravens -3 vs -3.5, Cowboys -3 vs -2.7 changed rankings more than any injury did.
@@ -13,7 +14,7 @@ Sections: Process rules (how we build the card), Pattern log (what the results a
 - **Weather flags need a same-day recheck before they drive a pick.** 2026-09-15: two of two early-week weather flags (DAL@NYG rain, DEN@KC wind/precip) had faded to "no material impact" by kickoff per day-of intel scans. Don't let a multi-day-old forecast flag stand in for a game-day check. UPDATE 2026-09-22: Week 2 ran the opposite way — the Gillette (PIT@NE) and MetLife (GB@NYJ) weather flags both correlated with genuinely low-scoring Unders hitting (2-for-2). The rule itself stands (still confirm same-day, still don't let a stale forecast alone drive a pick) but the outcome data is now genuinely mixed (2-for-2 fading in Wk1, 2-for-2 holding in Wk2) rather than one-directional — don't treat "weather flags fade" as settled. UPDATE 2026-09-29: same-day-confirmed weather Unders are now 4-1 (TEN@NYG nor'easter, 19 total); rain/wind/wet games in first_half_log went Under the close 7/10. A weather flag that is re-confirmed on game day (wind ≥15 mph or rain ≥80%) may now support an Under lean; an unconfirmed early-week flag still may not.
 - **Don't ship a prop row with a TBD price/line unless it's a binary anytime-TD market.** Flagged after Week 1 (Etienne rush yds, Evans/Egbuka receptions both NOGRADE). Recurred in Week 2 anyway — Montgomery rush yds, Mayer receptions, and Mac Jones passing yards all shipped TBD and all graded NOGRADE. Get a real number before the card locks or drop the row; this has cost two straight weeks of ungradable prop rows.
 - **No "role-vacancy" anytime-TD props.** (Added 2026-09-29.) Props built only on "teammate out → player X inherits the TDs" are 0-6 season-to-date (Etienne, Montgomery x2, Black, Adams, Gadsden). A TD prop needs a real price AND a player who already owns the goal-line/red-zone role; max 2 props per card.
-- **1H favorite leans only at or below the half-spread.** (Added 2026-09-29; supersedes the 62.1% base rate quoted on the Week 3 card.) Favorites cover half the closing spread at the break 25-20 (55.6%, n=45); 6.5+ favorites 9/15. A 1H price worse than half the full-game spread is a PASS (W3-H3 DET -4 vs -3.25 lost by 1).
+- **1H favorite leans only at or below the half-spread.** (Added 2026-09-29; supersedes the 62.1% base rate quoted on the Week 3 card.) Favorites cover half the closing spread at the break 25-20 (55.6%, n=45); 6.5+ favorites 9/15. UPDATE 2026-10-13: base rate decayed to 32-29 (52.5%, n=61) after Week 4 went 7-9; keep the at-or-below-half-spread rule and require the price to be at least 1 point below half the spread before leaning. A 1H price worse than half the full-game spread is a PASS (W3-H3 DET -4 vs -3.25 lost by 1).
 - **QB-availability rationale needs a same-day (Sunday-morning) recheck when it names a specific backup by name**, not just when a player carries a questionable/doubtful tag. 2026-09-22: MIA@SF card rows (W2-25, W2-26, W2-H2, W2-P4, W2-P5) were built on "Purdy out/unlikely, Jones starts" — Purdy started and played the whole game. Five rows were built on the wrong premise even though two of them (the spread/total) happened to lose for unrelated reasons anyway.
 
 ## Pattern log
@@ -55,6 +56,15 @@ Sections: Process rules (how we build the card), Pattern log (what the results a
 - first_half_log n=48: 1H share 48.3%; 1H total vs 0.47×close is 24/24 (calibrated); favorite half-spread cover 55.6%.
 - Data quality: fixed unquoted-comma `book` field on the 5 TNF card rows. The 9/28 daily intel social pulse cites results that don't match PFR (Ravens 1-3, DAL-GB 40-40 tie), so treat intel roster/result claims as unverified.
 
+### 2026-10-13 — Week 4 graded (Week 4 card bets 6-3-1, +2.45u; season 58-44-4, 56.9%, +8.73u)
+- Tier A 10-3 (+6.09u), B 13-10-1, C 35-31-3. Week 4 was all Tier C (6-3-1). Derived rows 5-0 (team totals + 1H Unders on QB-downgrade games), spreads 0-2-1. Season: derived 20-10-2 (+8.18u), `injury` 8-17 (-9.73u), props 3-8.
+- New buckets graded for the first time: SU winners 9-6 (about -2.2u at the real moneylines, +2.18u only at -110), FP forced picks 9-21-1 (spreads 3-9-1, 1H 5-10). Week 4 favorites went 4-10-2 ATS / 9-7 SU, so FP's loss is mostly a dog-heavy week; no rule from one week.
+- QB-change Unders hit where both offenses were impaired (IND/WAS, GB/TB, NYJ/CHI, MIA/MIN) but ARI/NYG (60 vs 44.5) and ATL/NO (69 vs 48) went Over. Not a blanket rule (n=6).
+- PASS would-have: 10-7 season (4-2 Week 4); qb-change PASS with a side 2-0 (both Unders).
+- first_half_log n=78 (added Weeks 4 and 5): 1H share 47.9%; 1H total vs 0.47 x close 33/31; favorite half-spread cover 32-29 (52.5%, was 55.6%); rain/wind/heat games run low in the 1H (n=3-7 each, early).
+- Data gaps: line files end 10/3 so Week 4/5 have no closes and no CLV (avg still +0.089, n=28). The 10/6 Tuesday run did not happen. DET@CAR PFR quarters sum to 23 vs final 26. BUF@LAR (10/12) not final on PFR at fetch time; log next run.
+- Rule change: 1H favorite lean base rate updated (see Process rules).
+
 ## Open questions to answer with data
 
 - Do A-tier spreads at a *better* number than the model's entry actually hit more than B/C? (This is the CLV thesis.)
@@ -66,3 +76,13 @@ Sections: Process rules (how we build the card), Pattern log (what the results a
 - Does a WATCH-tier row with "no model pick in ledger" earn its card slot, or should those injury/weather watch items just stay in the daily intel report instead of taking a card row that's guaranteed to be a PASS?
 - **Does the 16:05/16:25 ET kickoff window underperform structurally, or is it a Tier-C sample artifact?** (Added 2026-09-22.) That window is 12-14-1 (-3.09u) season-to-date vs. 13:00 ET's 22-10-1 (+10.0u), and produced a 7-game losing streak in Week 2 alone. Track by tier within the window before concluding anything — the window may just be disproportionately Tier C rather than bad in itself.
 - **Home-opener 1H bump (added 2026-09-20, user hypothesis):** user flagged NE (hosting PIT in Week 2, after opening on the road at SEA in Week 1) as a team likely to get an extra 1H home-field edge in its first home game of the season, and suggested this should generalize to any team playing its first home game. Checked first_half_log.csv: of Week 2's 15 Sun/Mon home teams, 10 are true first-time home teams this season (were road teams in Week 1) — ATL, BAL, CHI, NE, NYJ, TB, DEN, DAL, ARI, SF. The other 5 (HOU, TEN, LAC, KC, LAR) already had their home opener in Week 1. No 1H data exists yet to test this (first_half_log is all Week 1 so far, n=16) — this is an untested hypothesis, not a confirmed pattern. Track 1H performance for these 10 teams specifically in the Week 2 grading pass to start building a read on it.
+
+## Winners-first tracking (added 2026-10-04, user request)
+
+The user wants game winners, not board edges. From Week 4 on, track these alongside the A/B/C tiers, as separate buckets. Grade them in the Tuesday review.
+
+- **Files.** `data/winners_tracker.csv` has one row per game (SU pick, spread pick, 1H pick, projected score, results). `analyst_card.csv` has the same picks as rows: SU winners `W4-M*` (tier SU, graded on the outright result only), forced spread picks `W4-S*` and forced 1H sides `W4-F*` (tier FP), plus `W4-T3` (TEN team total Under 15.5, tier FP).
+- **What FP means.** "Forced pick": a side was chosen in every game with no minimum edge. Do not mix FP or SU rows into the A/B/C records. Report their own records.
+- **Grade each week:** (1) SU record overall and by win-probability bucket (<60, 60-69, 70+); (2) FP spread record, split into "same-team" games (SU winner = cover pick) vs "split" games; (3) FP 1H record; (4) projected score error: mean absolute error on total and on margin vs the book's total and spread; (5) whether the 12 same-team games hit more often than the 3 splits (Week 4: 12 same, 3 split).
+- **Book numbers.** SU win % is the user's book moneyline with juice removed; CIN ML is -149 (supplied by user). Spread and 1H prices come from the user's screenshots; CIN spread -120 and 1H -115 now supplied.
+- **Not tracked.** Anything labeled "PASS" in Week 4 is still a no-bet. SU winners exist for every game, including PASS games.
